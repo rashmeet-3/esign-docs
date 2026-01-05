@@ -1,11 +1,4 @@
-site_name: eSign Java SDK v1.0 Documentation
-site_description: Complete documentation for eSign Java SDK - Digital Signature API
-site_author: Capricorn Technologies
-site_url: https://rashmeet-3.github.io/esign-docs/
-
-# Repository (update these with your GitHub details)
-repo_name: rashmeet-3/esign-docs
-repo_url: https://github.com/rashmeet-3/esign-docs
+site_name: eSign JAVA SDK v1.0
 
 theme:
   name: material
@@ -22,13 +15,6 @@ theme:
       toggle:
         icon: material/brightness-4
         name: Switch to light mode
-  features:
-    - navigation.tabs
-    - navigation.sections
-    - navigation.top
-    - search.suggest
-    - search.highlight
-    - content.code.copy
 
 markdown_extensions:
   - admonition
@@ -39,33 +25,12 @@ markdown_extensions:
           class: mermaid
           format: !!python/name:pymdownx.superfences.fence_code_format
   - tables
-  - pymdownx.highlight:
-      anchor_linenums: true
-  - pymdownx.inlinehilite
-  - pymdownx.snippets
-  - attr_list
-  - md_in_html
-
-plugins:
-  - search
 
 nav:
   - Home: index.md
-  - Getting Started:
-    - Quick Start Guide: quick-start-guide.md
-    - Deployment Checklist: deployment-checklist.md
-  - Technical Documentation:
-    - Part 1 - Installation & Setup: eSign-sdk-technical-documentation.md
-    - Part 2 - API Details: eSign-sdk-technical-documentation-part2.md
-  - API Reference:
-    - API Guide: esign-api-guide.md
-    - Quick Reference Card: api-reference-card.md
-
-extra:
-  social:
-    - icon: fontawesome/brands/github
-      link: https://github.com/rashmeet-3
-  version:
-    provider: mike
-
-copyright: Copyright &copy; 2025 Capricorn Technologies
+  - Quick Start Guide: quick-start-guide.md
+  - Technical Documentation Part 1: eSign-sdk-technical-documentation.md
+  - Technical Documentation Part 2: eSign-sdk-technical-documentation-part2.md
+  - Deployment Checks: deployment-checklist.md
+  - API Reference: api-reference-card.md
+  - eSign API Guide: esign-api-guide.md
