@@ -151,7 +151,7 @@ The `mode` parameter specifies the Aadhaar authentication method.
 | `online-aadhaar-bio` | Biometric (Fingerprint) authentication | eSign 2.1 | User provides fingerprint scan |
 | `online-aadhaar-iris` | Iris scan authentication | eSign 2.1 | User provides iris scan |
 | `online-aadhaar-face` | Face authentication | eSign 2.1 | User provides face scan |
-| `online-aadhaar-ekyc` | eKYC-based authentication | eSign 3.2 | Pre-verified eKYC identity |
+| `capricorn-ekyc-account` | eKYC-based authentication | eSign 3.2 | Pre-verified Capricorn eKYC account |
 
 ### Mode Selection Guide
 
@@ -161,7 +161,7 @@ The `mode` parameter specifies the Aadhaar authentication method.
 | In-person signing with fingerprint device | `online-aadhaar-bio` |
 | High-security environments | `online-aadhaar-iris` |
 | Modern biometric systems | `online-aadhaar-face` |
-| Pre-verified KYC customers | `online-aadhaar-ekyc` |
+| Pre-verified KYC customers | `capricorn-ekyc-account` |
 
 ### Examples
 
@@ -185,9 +185,9 @@ The `mode` parameter specifies the Aadhaar authentication method.
 <mode>online-aadhaar-face</mode>
 ```
 
-**eKYC Mode (Requires ekycid):**
+**Capricorn eKYC Account Mode (Requires ekycid):**
 ```xml
-<mode>online-aadhaar-ekyc</mode>
+<mode>capricorn-ekyc-account</mode>
 <ekycid>EKYC123456789</ekycid>
 ```
 
@@ -199,7 +199,7 @@ The `mode` parameter specifies the Aadhaar authentication method.
 | `online-aadhaar-bio` | No | Fingerprint scanner | Place finger on scanner |
 | `online-aadhaar-iris` | No | Iris scanner | Look into scanner |
 | `online-aadhaar-face` | No | Camera | Face the camera |
-| `online-aadhaar-ekyc` | **Yes** | No | Minimal (pre-verified) |
+| `capricorn-ekyc-account` | **Yes** | No | Minimal (pre-verified) |
 
 ---
 
@@ -217,6 +217,8 @@ The `option` block controls signature appearance and placement.
 | `greenticked` | String | `y` | Show green checkmark icon: `y` or `n` |
 | `dateformat` | String | `dd-MMM-yyyy hh:mm a` | Date format in signature |
 | `lockpdf` | String | `n` | PDF lock mode (see [Lock Modes](#7-pdf-lock-modes)) |
+
+> **Note:** All signatures use **PKCS7_COMPLETE** format with **Timestamp (TSA)** and **LTV (Long Term Validation)** enabled by default. This ensures signatures include full certificate chain, cryptographic proof of signing time from a trusted Timestamp Authority, and remain valid for long-term verification even after certificate expiration.
 
 ### Coordinate System
 
@@ -545,7 +547,7 @@ If `callbackurl` is provided, a POST request is sent when signing completes or f
 }
 ```
 
-### Example 5: eKYC Mode
+### Example 5: Capricorn eKYC Account Mode
 
 ```json
 {
@@ -553,7 +555,7 @@ If `callbackurl` is provided, a POST request is sent when signing completes or f
         "uploadpdf": {
             "pdf64": "...",
             "title": "KYC Document",
-            "mode": "online-aadhaar-ekyc",
+            "mode": "capricorn-ekyc-account",
             "ekycid": "EKYC123456789",
             "signername": "Amit Kumar"
         }
@@ -566,4 +568,4 @@ If `callbackurl` is provided, a POST request is sent when signing completes or f
 ## Support
 
 **Version:** 1.0  
-**Last Updated:** January 2025
+**Last Updated:** December 2025
