@@ -14,7 +14,7 @@ Base URL: `http://localhost:8080/api/esign`
 | `online-aadhaar-bio` | Biometric (Fingerprint) | Fingerprint scan |
 | `online-aadhaar-iris` | Iris Authentication | Iris scan |
 | `online-aadhaar-face` | Face Authentication | Face scan |
-| `online-aadhaar-ekyc` | eKYC Authentication | Pre-verified identity |
+| `capricorn-ekyc-account` | eKYC Authentication | Pre-verified identity |
 
 ---
 
