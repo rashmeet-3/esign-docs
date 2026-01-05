@@ -1,4 +1,4 @@
-# eSign SDK v1.0 - Documentation Package
+# eSign SDK v2.1.0 - Documentation Package
 
 **Complete Technical Documentation for Client Delivery**
 
@@ -6,7 +6,7 @@
 
 ## Documentation Overview
 
-This package contains comprehensive technical documentation for the **eSign SDK v1.0** - a Java-based server application for digital signature integration using India's eSign infrastructure.
+This package contains comprehensive technical documentation for the **eSign SDK v2.1.0** - a Java-based server application for digital signature integration using India's eSign infrastructure.
 
 ---
 
@@ -89,16 +89,48 @@ This package contains comprehensive technical documentation for the **eSign SDK 
 
 ---
 
-### 3. **Additional Documents**
+### 3. **Android SDK Documentation** 📱
 
-#### [android_compatibility_report.md](android_compatibility_report.md)
-**Android compatibility analysis**
+#### [android-sdk-quickstart.md](android-sdk-quickstart.md)
+**Get started with Android SDK in 5 minutes**
 
 **Contents:**
-- Compatibility assessment (not Android compatible)
+- Installation (AAR file setup)
+- Basic usage with code examples
+- Authentication modes overview
+- Signing options quick reference
+
+**Target Audience:** Android developers, mobile teams
+
+---
+
+#### [android-sdk-guide.md](android-sdk-guide.md)
+**Complete Android SDK integration guide**
+
+**Contents:**
+- Complete signing flow with diagrams
+- Step-by-step integration
+- WebView handling for OTP authentication
+- Request/Response JSON formats
+- All authentication modes (OTP, Bio, Iris, Face, eKYC)
+- Signing options and coordinates
+- Error handling
+- Troubleshooting guide
+- FAQ
+
+**Target Audience:** Android developers, integration engineers
+
+---
+
+### 4. **Additional Documents**
+
+#### [android_compatibility_report.md](android_compatibility_report.md)
+**Android compatibility analysis (legacy)**
+
+**Contents:**
+- Compatibility assessment
 - Technical reasons and dependencies
-- Two solution approaches (rewrite vs client-server)
-- Recommendations
+- Solution approaches
 
 **Target Audience:** Mobile development teams, architects
 
@@ -121,7 +153,8 @@ This package contains comprehensive technical documentation for the **eSign SDK 
 | **Troubleshoot issues** | Main Technical Documentation (Part 2) - Section 10 |
 | **Deploy to production** | Deployment Checklist |
 | **Quick API lookup** | API Reference Card |
-| **Mobile integration** | android_compatibility_report.md |
+| **Mobile integration** | [Android SDK Quick Start](android-sdk-quickstart.md) |
+| **Android complete guide** | [Android SDK Complete Guide](android-sdk-guide.md) |
 
 ---
 
@@ -168,14 +201,14 @@ This package contains comprehensive technical documentation for the **eSign SDK 
 
 | Specification | Details |
 |---------------|---------|
-| **Version** | 1.0 |
+| **Version** | 2.1.0 |
 | **Platform** | Java 17, Spring Boot 3.2.0 |
 | **Server** | Embedded Apache Tomcat |
 | **API Style** | RESTful JSON |
 | **Supported OS** | Windows, Linux, macOS |
 | **eSign Versions** | 2.1 (OTP-based), 3.2 (eKYC-based) |
-| **PDF Library** | iText 5.5.13.3 |
-| **Cryptography** | Bouncy Castle 1.64 |
+| **PDF Library** | iText 7.2.5 |
+| **Cryptography** | Bouncy Castle 1.77 |
 
 ---
 
@@ -185,7 +218,7 @@ This package contains comprehensive technical documentation for the **eSign SDK 
 - **API Reference**: [API Reference Card](api-reference-card.md)
 - **Full Documentation**: [Technical Documentation Part 1](eSign-sdk-technical-documentation.md) | [Part 2](eSign-sdk-technical-documentation-part2.md)
 - **Deployment**: [Deployment Checklist](deployment-checklist.md)
-- **Android**: [Compatibility Report](android_compatibility_report.md)
+- **Android SDK**: [Quick Start](android-sdk-quickstart.md) | [Complete Guide](android-sdk-guide.md)
 
 ---
 

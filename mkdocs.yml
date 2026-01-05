@@ -1,4 +1,5 @@
-site_name: eSign JAVA SDK v1.0
+site_name: eSign SDK Documentation v1.0
+site_description: Complete documentation for eSign Java SDK and Android SDK
 
 theme:
   name: material
@@ -15,6 +16,12 @@ theme:
       toggle:
         icon: material/brightness-4
         name: Switch to light mode
+  features:
+    - navigation.tabs
+    - navigation.sections
+    - navigation.expand
+    - toc.integrate
+    - content.code.copy
 
 markdown_extensions:
   - admonition
@@ -24,13 +31,27 @@ markdown_extensions:
         - name: mermaid
           class: mermaid
           format: !!python/name:pymdownx.superfences.fence_code_format
+  - pymdownx.tabbed:
+      alternate_style: true
   - tables
+  - attr_list
+  - pymdownx.emoji:
+      emoji_index: !!python/name:material.extensions.emoji.twemoji
+      emoji_generator: !!python/name:material.extensions.emoji.to_svg
 
 nav:
   - Home: index.md
-  - Quick Start Guide: quick-start-guide.md
-  - Technical Documentation Part 1: eSign-sdk-technical-documentation.md
-  - Technical Documentation Part 2: eSign-sdk-technical-documentation-part2.md
-  - Deployment Checks: deployment-checklist.md
-  - API Reference: api-reference-card.md
-  - eSign API Guide: esign-api-guide.md
+  
+  - Java SDK:
+    - Quick Start Guide: quick-start-guide.md
+    - Technical Documentation Part 1: eSign-sdk-technical-documentation.md
+    - Technical Documentation Part 2: eSign-sdk-technical-documentation-part2.md
+    - Deployment Checklist: deployment-checklist.md
+  
+  - Android SDK:
+    - Quick Start: android-sdk-quickstart.md
+    - Complete Guide: android-sdk-guide.md
+  
+  - API Reference:
+    - API Reference Card: api-reference-card.md
+    - eSign API Guide: esign-api-guide.md
