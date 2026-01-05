@@ -1,4 +1,4 @@
-# eSign SDK v1.0 - Deployment Checklist
+# eSign SDK v1.0.0 - Deployment Checklist
 
 **Production Deployment Checklist**
 

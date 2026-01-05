@@ -1,4 +1,4 @@
-# eSign SDK v1.0 - Technical Documentation (Part 2)
+# eSign SDK v1.0.0 - Technical Documentation (Part 2)
 
 ## 7.3 Detailed API Reference
 

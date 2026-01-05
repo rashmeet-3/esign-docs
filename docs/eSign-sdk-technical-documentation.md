@@ -1,4 +1,4 @@
-# eSign SDK v1.0 - Technical Documentation
+# eSign SDK v1.0.0 - Technical Documentation
 
 **Document Version:** 1.0  
 **Release Date:** December 2025  
@@ -29,7 +29,7 @@
 
 ### 1.1 Product Overview
 
-The **eSign SDK v1.0** is a comprehensive Java-based server application that enables digital signature capabilities for PDF documents using India's eSign infrastructure. Built on Spring Boot 3.2.0, this SDK provides a robust, production-ready solution for integrating digital signatures into enterprise applications.
+The **eSign SDK v1.0.0** is a comprehensive Java-based server application that enables digital signature capabilities for PDF documents using India's eSign infrastructure. Built on Spring Boot 3.2.0, this SDK provides a robust, production-ready solution for integrating digital signatures into enterprise applications.
 
 ### 1.2 Key Features
 

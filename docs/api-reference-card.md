@@ -1,4 +1,4 @@
-# eSign SDK v1.0 - API Reference Card
+# eSign SDK v1.0.0 - API Reference Card
 
 **Quick Reference for All API Endpoints**
 

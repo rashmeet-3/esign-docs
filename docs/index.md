@@ -1,4 +1,4 @@
-# eSign SDK v2.1.0 - Documentation Package
+# eSign SDK v1.0.0 - Documentation Package
 
 **Complete Technical Documentation for Client Delivery**
 
@@ -6,7 +6,11 @@
 
 ## Documentation Overview
 
-This package contains comprehensive technical documentation for the **eSign SDK v2.1.0** - a Java-based server application for digital signature integration using India's eSign infrastructure.
+This package contains comprehensive technical documentation for the **eSign SDK v1.0.0** - a complete digital signature solution using India's eSign infrastructure. The SDK includes:
+
+- **Java SDK (Server)** - Core signing engine
+- **Android SDK (AAR)** - Mobile client library
+- **JavaScript SDK** - Browser & Node.js client library
 
 ---
 
@@ -122,17 +126,47 @@ This package contains comprehensive technical documentation for the **eSign SDK 
 
 ---
 
-### 4. **Additional Documents**
+### 4. **JavaScript SDK Documentation** 🌐
 
-#### [android_compatibility_report.md](android_compatibility_report.md)
-**Android compatibility analysis (legacy)**
+#### [js-sdk-quickstart.md](js-sdk-quickstart.md)
+**Get started with JavaScript SDK in 5 minutes**
 
 **Contents:**
-- Compatibility assessment
-- Technical reasons and dependencies
-- Solution approaches
+- Installation (Browser & Node.js)
+- Basic usage with code examples
+- Authentication modes overview
+- File conversion utilities
 
-**Target Audience:** Mobile development teams, architects
+**Target Audience:** Web developers, Frontend teams, Node.js developers
+
+---
+
+#### [js-sdk-guide.md](js-sdk-guide.md)
+**Complete JavaScript SDK integration guide**
+
+**Contents:**
+- Complete signing flow with diagrams
+- Full API reference (ESignClient, ESignRequest, SigningOptions)
+- Browser and Node.js examples
+- Error handling and troubleshooting
+- TypeScript support
+- Best practices
+
+**Target Audience:** Web developers, Full-stack developers, integration engineers
+
+---
+
+### 5. **API Reference Documents**
+
+#### [api-reference-card.md](api-reference-card.md)
+**Single-page API cheat sheet**
+
+**Contents:**
+- All API endpoints with URLs
+- Request/response formats
+- Quick tips and mode differences
+
+**Target Audience:** Developers during integration (printable reference)
 
 ---
 
@@ -155,6 +189,8 @@ This package contains comprehensive technical documentation for the **eSign SDK 
 | **Quick API lookup** | API Reference Card |
 | **Mobile integration** | [Android SDK Quick Start](android-sdk-quickstart.md) |
 | **Android complete guide** | [Android SDK Complete Guide](android-sdk-guide.md) |
+| **Web integration** | [JavaScript SDK Quick Start](js-sdk-quickstart.md) |
+| **JavaScript complete guide** | [JavaScript SDK Complete Guide](js-sdk-guide.md) |
 
 ---
 
@@ -201,14 +237,16 @@ This package contains comprehensive technical documentation for the **eSign SDK 
 
 | Specification | Details |
 |---------------|---------|
-| **Version** | 2.1.0 |
+| **SDK Version** | 1.0.0 |
 | **Platform** | Java 17, Spring Boot 3.2.0 |
 | **Server** | Embedded Apache Tomcat |
 | **API Style** | RESTful JSON |
 | **Supported OS** | Windows, Linux, macOS |
 | **eSign Versions** | 2.1 (OTP-based), 3.2 (eKYC-based) |
-| **PDF Library** | iText 7.2.5 |
-| **Cryptography** | Bouncy Castle 1.77 |
+| **PDF Library** | iText 5.5.13 |
+| **Cryptography** | Bouncy Castle 1.64 |
+| **Android SDK** | API 21+ (AAR format) |
+| **JavaScript SDK** | Browser & Node.js 14+ |
 
 ---
 
@@ -219,6 +257,7 @@ This package contains comprehensive technical documentation for the **eSign SDK 
 - **Full Documentation**: [Technical Documentation Part 1](eSign-sdk-technical-documentation.md) | [Part 2](eSign-sdk-technical-documentation-part2.md)
 - **Deployment**: [Deployment Checklist](deployment-checklist.md)
 - **Android SDK**: [Quick Start](android-sdk-quickstart.md) | [Complete Guide](android-sdk-guide.md)
+- **JavaScript SDK**: [Quick Start](js-sdk-quickstart.md) | [Complete Guide](js-sdk-guide.md)
 
 ---
 
@@ -238,7 +277,7 @@ If you find any issues or have suggestions for improving this documentation, ple
 
 | Property | Value |
 |----------|-------|
-| **Document Package Version** | 1.0 |
+| **Document Package Version** | 1.0.0 |
 | **Release Date** | December 2025 |
 | **Author** | Capricorn Identity Service |
 | **Last Updated** | 2025-12-15 |
@@ -274,13 +313,25 @@ This documentation package includes:
 
 ```
 Documentation_Package/
-├── README.md (this file)
-├── eSign-sdk-technical-documentation.md (Part 1)
-├── eSign-sdk-technical-documentation-part2.md (Part 2)
+├── index.md (this file)
 ├── quick-start-guide.md
-├── api-reference-card.md
-├── deployment-checklist.md
-└── android_compatibility_report.md
+│
+├── Java SDK/
+│   ├── eSign-sdk-technical-documentation.md (Part 1)
+│   ├── eSign-sdk-technical-documentation-part2.md (Part 2)
+│   └── deployment-checklist.md
+│
+├── Android SDK/
+│   ├── android-sdk-quickstart.md
+│   └── android-sdk-guide.md
+│
+├── JavaScript SDK/
+│   ├── js-sdk-quickstart.md
+│   └── js-sdk-guide.md
+│
+└── API Reference/
+    ├── api-reference-card.md
+    └── esign-api-guide.md
 ```
 
 ---

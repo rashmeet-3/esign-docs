@@ -1,4 +1,4 @@
-# eSign SDK v1.0 - Quick Start Guide
+# eSign SDK v1.0.0 - Quick Start Guide
 
 **Get started with eSign SDK in 5 minutes**
 
