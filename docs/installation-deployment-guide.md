@@ -1015,7 +1015,7 @@ ESP callback URL not reachable
     These additional steps are recommended for production environments.
 
 #### Infrastructure
-- [ ] Server provisioned (minimum 4GB RAM, 2 CPU cores)
+- [ ] Server provisioned (minimum 8GB RAM, 8 CPU cores)
 - [ ] Domain name configured
 - [ ] SSL/TLS certificate obtained
 - [ ] Reverse proxy configured (Nginx/Apache)
