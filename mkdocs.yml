@@ -48,8 +48,8 @@ markdown_extensions:
 nav:
   - Home: index.md
   
-  - Installation & Deployment:
-    - Complete Setup Guide: installation-deployment-guide.md
+  - Installation & Setup:
+    - Complete Installation Guide: installation-deployment-guide.md
   
   - Java SDK:
     - Quick Start Guide: quick-start-guide.md
