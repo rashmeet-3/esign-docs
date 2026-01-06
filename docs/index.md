@@ -4,6 +4,11 @@
 
 ---
 
+!!! tip "New to eSign SDK?"
+    Start with the **[Complete Installation & Deployment Guide](installation-deployment-guide.md)** for step-by-step setup instructions on Windows, Linux, and Mac.
+
+---
+
 ## Documentation Overview
 
 This package contains comprehensive technical documentation for the **eSign SDK v1.0.0** - a complete digital signature solution using India's eSign infrastructure. The SDK includes:
@@ -15,6 +20,28 @@ This package contains comprehensive technical documentation for the **eSign SDK 
 ---
 
 ## Document List
+
+### 0. **Installation & Deployment Guide** ⭐ NEW
+
+#### [installation-deployment-guide.md](installation-deployment-guide.md)
+**Complete setup guide for all platforms**
+
+**Contents:**
+- System architecture overview
+- What you receive from Capricorn (ESP)
+- Prerequisites with version requirements
+- Step-by-step installation for Windows, Linux, Mac
+- Configuration guide with all properties
+- Build and deployment instructions
+- Starting and stopping services
+- Testing with ngrok
+- Production deployment
+- Common errors and solutions
+- Rebuilding after configuration changes
+
+**Target Audience:** Everyone - Start here!
+
+---
 
 ### 1. **Main Technical Documentation**
 
@@ -176,16 +203,17 @@ This package contains comprehensive technical documentation for the **eSign SDK 
 
 | Your Goal | Recommended Document |
 |-----------|---------------------|
+| **First time setup** | [Complete Installation & Deployment Guide](installation-deployment-guide.md) |
 | **Understand the product** | Main Technical Documentation (Part 1) - Sections 1-2 |
 | **Evaluate system requirements** | Main Technical Documentation (Part 1) - Section 4 |
-| **Install for testing** | Quick Start Guide |
-| **Install for production** | Main Technical Documentation (Part 1) - Section 5 + Deployment Checklist |
-| **Configure the application** | Main Technical Documentation (Part 1) - Section 6 |
+| **Install for testing** | [Installation & Deployment Guide](installation-deployment-guide.md) or Quick Start Guide |
+| **Install for production** | [Installation & Deployment Guide](installation-deployment-guide.md) + Deployment Checklist |
+| **Configure the application** | [Installation & Deployment Guide](installation-deployment-guide.md) - Configuration section |
 | **Integrate via API** | API Reference Card + Part 2 - Section 7 |
 | **Write integration code** | Main Technical Documentation (Part 2) - Section 8 |
 | **Understand security** | Main Technical Documentation (Part 2) - Section 9 |
-| **Troubleshoot issues** | Main Technical Documentation (Part 2) - Section 10 |
-| **Deploy to production** | Deployment Checklist |
+| **Troubleshoot issues** | [Installation & Deployment Guide](installation-deployment-guide.md) - Common Errors |
+| **Deploy to production** | [Installation & Deployment Guide](installation-deployment-guide.md) + Deployment Checklist |
 | **Quick API lookup** | API Reference Card |
 | **Mobile integration** | [Android SDK Quick Start](android-sdk-quickstart.md) |
 | **Android complete guide** | [Android SDK Complete Guide](android-sdk-guide.md) |
@@ -196,14 +224,18 @@ This package contains comprehensive technical documentation for the **eSign SDK 
 
 ## Recommended Reading Order
 
+### For Everyone (First Time):
+1. [Complete Installation & Deployment Guide](installation-deployment-guide.md) - Start here!
+2. Quick Start Guide (test your installation)
+
 ### For System Administrators:
-1. Quick Start Guide (get familiar)
-2. Main Technical Documentation Part 1 - Sections 4-6 (requirements, installation, configuration)
+1. [Installation & Deployment Guide](installation-deployment-guide.md) (complete setup)
+2. Main Technical Documentation Part 1 - Sections 4-6 (requirements, configuration)
 3. Deployment Checklist (production deployment)
 4. Main Technical Documentation Part 2 - Section 10 (troubleshooting)
 
 ### For Developers:
-1. Quick Start Guide (get started quickly)
+1. [Installation & Deployment Guide](installation-deployment-guide.md) (get started)
 2. API Reference Card (quick reference)
 3. Main Technical Documentation Part 2 - Sections 7-8 (API details, usage examples)
 4. Main Technical Documentation Part 1 - Section 3 (architecture understanding)
@@ -252,6 +284,7 @@ This package contains comprehensive technical documentation for the **eSign SDK 
 
 ## Quick Links
 
+- **🚀 Installation & Setup**: [Complete Installation & Deployment Guide](installation-deployment-guide.md)
 - **Installation**: [Quick Start Guide](quick-start-guide.md)
 - **API Reference**: [API Reference Card](api-reference-card.md)
 - **Full Documentation**: [Technical Documentation Part 1](eSign-sdk-technical-documentation.md) | [Part 2](eSign-sdk-technical-documentation-part2.md)
@@ -314,6 +347,7 @@ This documentation package includes:
 ```
 Documentation_Package/
 ├── index.md (this file)
+├── installation-deployment-guide.md  ⭐ NEW - Complete Setup Guide
 ├── quick-start-guide.md
 │
 ├── Java SDK/

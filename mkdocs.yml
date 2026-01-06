@@ -48,6 +48,9 @@ markdown_extensions:
 nav:
   - Home: index.md
   
+  - Installation & Deployment:
+    - Complete Setup Guide: installation-deployment-guide.md
+  
   - Java SDK:
     - Quick Start Guide: quick-start-guide.md
     - Technical Documentation Part 1: eSign-sdk-technical-documentation.md
