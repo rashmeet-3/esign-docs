@@ -896,26 +896,45 @@ ESP callback URL not reachable
 
 ## Deployment Checklist
 
+### Legend
+
+| Symbol | Category | Description |
+|--------|----------|-------------|
+| 🔴 | **MANDATORY** | Must be completed before go-live |
+| 🟡 | **RECOMMENDED** | Strongly suggested for production |
+| 🟢 | **OPTIONAL** | Nice to have, can be done later |
+
+---
+
 ### Pre-Deployment Checklist
 
 #### Prerequisites
-- [ ] Java 17+ installed and verified (`java -version`)
-- [ ] ngrok installed and configured with authtoken
-- [ ] ngrok account created (free tier is fine)
-- [ ] Package extracted successfully
+
+| Priority | Item | Notes |
+|----------|------|-------|
+| 🔴 | Java 17+ installed and verified (`java -version`) | Required |
+| 🔴 | ngrok installed and configured with authtoken | For ESP callbacks |
+| 🔴 | ngrok account created (free tier is fine) | https://ngrok.com |
+| 🔴 | Package extracted successfully | Unzip the SDK |
 
 #### Files from Capricorn (ESP Provider)
-- [ ] `eSignLicense` file received
-- [ ] `privatekey.pfx` certificate received
-- [ ] Certificate password received
-- [ ] ASP ID received
-- [ ] Signer ID received (for eSign 3.2 mode)
-- [ ] ESP URLs received (demo and/or production)
+
+| Priority | Item | Notes |
+|----------|------|-------|
+| 🔴 | `eSignLicense` file received | License activation |
+| 🔴 | `privatekey.pfx` certificate received | Signing certificate |
+| 🔴 | Certificate password received | For privatekey.pfx |
+| 🔴 | ASP ID received | Organization identifier |
+| 🟡 | Signer ID received | Required for eSign 3.2 mode only |
+| 🔴 | ESP URLs received (demo and/or production) | Signing endpoints |
 
 #### Files Placed Correctly
-- [ ] `eSignLicense` copied to `esign-api/config/`
-- [ ] `privatekey.pfx` copied to `esign-api/config/`
-- [ ] (Optional) Files also copied to `tomcat_esign/config/` if using Web UI
+
+| Priority | Item | Notes |
+|----------|------|-------|
+| 🔴 | `eSignLicense` copied to `esign-api/config/` | Exact filename required |
+| 🔴 | `privatekey.pfx` copied to `esign-api/config/` | Exact filename required |
+| 🟢 | Files also copied to `tomcat_esign/config/` | Only if using Web UI |
 
 ---
 
@@ -923,123 +942,141 @@ ESP callback URL not reachable
 
 #### esign-api/application.properties
 
-| Setting | Configured? | Value |
-|---------|-------------|-------|
-| `api.base-url` | [ ] | Your ngrok URL |
-| `api.auth.token` | [ ] | Your custom token |
-| `api.auth.key` | [ ] | Your custom key |
-| `esign.asp.id` | [ ] | From Capricorn |
-| `esign.certificate.password` | [ ] | From Capricorn |
-| `esign.3_2.signer.id` | [ ] | From Capricorn |
-| `esign.2_1.esp.url` | [ ] | From Capricorn |
-| `esign.3_2.esp.url` | [ ] | From Capricorn |
+| Priority | Setting | Value |
+|----------|---------|-------|
+| 🔴 | `api.base-url` | Your ngrok URL |
+| 🔴 | `api.auth.token` | Your custom secure token |
+| 🔴 | `api.auth.key` | Your custom secure key |
+| 🔴 | `esign.asp.id` | From Capricorn |
+| 🔴 | `esign.certificate.password` | From Capricorn |
+| 🟡 | `esign.3_2.signer.id` | From Capricorn (for 3.2 mode) |
+| 🔴 | `esign.2_1.esp.url` | From Capricorn |
+| 🟡 | `esign.3_2.esp.url` | From Capricorn (for 3.2 mode) |
 
 #### tomcat_esign/application.properties (Only if using Web UI)
 
-| Setting | Configured? | Value |
-|---------|-------------|-------|
-| `esign.base.url` | [ ] | Your ngrok URL |
-| `esign.2_1.response.url` | [ ] | ngrok URL + callback path |
-| `esign.3_2.response.url` | [ ] | ngrok URL + callback path |
-| `esign.asp.id` | [ ] | From Capricorn |
-| `esign.certificate.password` | [ ] | From Capricorn |
+| Priority | Setting | Value |
+|----------|---------|-------|
+| 🟢 | `esign.base.url` | Your ngrok URL |
+| 🟢 | `esign.2_1.response.url` | ngrok URL + callback path |
+| 🟢 | `esign.3_2.response.url` | ngrok URL + callback path |
+| 🟢 | `esign.asp.id` | From Capricorn |
+| 🟢 | `esign.certificate.password` | From Capricorn |
 
 ---
 
 ### Startup Checklist
 
 #### ngrok
-- [ ] ngrok running in separate terminal (`ngrok http 8081`)
-- [ ] ngrok URL copied and updated in config
-- [ ] ngrok shows "Session Status: online"
+
+| Priority | Item | Notes |
+|----------|------|-------|
+| 🔴 | ngrok running in separate terminal (`ngrok http 8081`) | Keep running |
+| 🔴 | ngrok URL copied and updated in config | Update application.properties |
+| 🔴 | ngrok shows "Session Status: online" | Verify connection |
 
 #### Server
-- [ ] Server started successfully (`start.bat` or `./start.sh`)
-- [ ] No errors in startup log
-- [ ] "Started ESignApiApplication" message shown
+
+| Priority | Item | Notes |
+|----------|------|-------|
+| 🔴 | Server started successfully (`start.bat` or `./start.sh`) | Check for errors |
+| 🔴 | No errors in startup log | Watch console output |
+| 🔴 | "Started ESignApiApplication" message shown | Success indicator |
 
 ---
 
 ### Testing Checklist
 
 #### Health Check
-- [ ] Local health check works:
-    ```
-    curl http://localhost:8081/api/v1/esign/health
-    ```
-    Response: `{"status":"UP"}`
 
-- [ ] ngrok health check works:
-    ```
-    curl https://YOUR-NGROK-URL.ngrok-free.dev/api/v1/esign/health
-    ```
-    Response: `{"status":"UP"}`
+| Priority | Item | Expected Result |
+|----------|------|-----------------|
+| 🔴 | Local: `curl http://localhost:8081/api/v1/esign/health` | `{"status":"UP"}` |
+| 🔴 | ngrok: `curl https://YOUR-NGROK-URL.ngrok-free.dev/api/v1/esign/health` | `{"status":"UP"}` |
 
 #### API Authentication
-- [ ] API responds with auth error without credentials (expected)
-- [ ] API responds successfully with correct token and key
+
+| Priority | Item | Notes |
+|----------|------|-------|
+| 🔴 | API responds with auth error without credentials | Expected behavior |
+| 🔴 | API responds successfully with correct token and key | Verify credentials |
 
 #### End-to-End Test
-- [ ] Test PDF uploaded successfully
-- [ ] Redirect URL generated
-- [ ] ESP page loads correctly
-- [ ] OTP/Authentication completes
-- [ ] Signed PDF returned successfully
-- [ ] Callback received by server
+
+| Priority | Item | Notes |
+|----------|------|-------|
+| 🔴 | Test PDF uploaded successfully | Use sample PDF |
+| 🔴 | Redirect URL generated | Check response |
+| 🔴 | ESP page loads correctly | Opens in browser |
+| 🔴 | OTP/Authentication completes | Use real Aadhaar |
+| 🔴 | Signed PDF returned successfully | Download works |
+| 🔴 | Callback received by server | Check logs |
 
 ---
 
 ### Security Checklist
 
 #### Credentials
-- [ ] `api.auth.token` is a strong, unique value
-- [ ] `api.auth.key` is a strong, unique value
-- [ ] Certificate password not shared in code/logs
-- [ ] Config files not committed to public repositories
+
+| Priority | Item | Notes |
+|----------|------|-------|
+| 🔴 | `api.auth.token` is a strong, unique value | 16+ characters recommended |
+| 🔴 | `api.auth.key` is a strong, unique value | 16+ characters recommended |
+| 🔴 | Certificate password not shared in code/logs | Security best practice |
+| 🔴 | Config files not committed to public repositories | Add to .gitignore |
 
 #### File Permissions (Linux/Mac)
-- [ ] Certificate file secured:
-    ```bash
-    chmod 600 esign-api/config/privatekey.pfx
-    ```
-- [ ] Config directory not world-readable:
-    ```bash
-    chmod 700 esign-api/config/
-    ```
+
+| Priority | Item | Command |
+|----------|------|---------|
+| 🟡 | Certificate file secured | `chmod 600 esign-api/config/privatekey.pfx` |
+| 🟡 | Config directory not world-readable | `chmod 700 esign-api/config/` |
 
 ---
 
 ### Production Deployment Checklist
 
 !!! warning "For Production Use"
-    These additional steps are recommended for production environments.
+    These additional steps are required for production environments.
 
 #### Infrastructure
-- [ ] Server provisioned (minimum 8GB RAM, 8 CPU cores)
-- [ ] Domain name configured
-- [ ] SSL/TLS certificate obtained
-- [ ] Reverse proxy configured (Nginx/Apache)
-- [ ] Firewall configured
+
+| Priority | Item | Notes |
+|----------|------|-------|
+| 🔴 | Server provisioned (minimum **8GB RAM, 8 CPU cores**) | Production requirements |
+| 🔴 | Domain name configured | Your production domain |
+| 🔴 | SSL/TLS certificate obtained | For HTTPS |
+| 🟡 | Reverse proxy configured (Nginx/Apache) | SSL termination |
+| 🔴 | Firewall configured (allow port 8081) | Security |
 
 #### Production Configuration
-- [ ] Production ESP URLs configured (not demo)
-- [ ] Production domain used instead of ngrok
-- [ ] HTTPS enforced
-- [ ] Logging configured appropriately
-- [ ] Log rotation configured
+
+| Priority | Item | Notes |
+|----------|------|-------|
+| 🔴 | Production ESP URLs configured (not demo) | From Capricorn |
+| 🔴 | Production domain used instead of ngrok | Your domain |
+| 🔴 | HTTPS enforced | Security requirement |
+| 🟡 | Logging configured appropriately | INFO or WARN level |
+| 🟢 | Log rotation configured | Prevent disk fill |
 
 #### Monitoring
-- [ ] Application logs monitored
-- [ ] Server resources monitored (CPU, RAM, disk)
-- [ ] Uptime monitoring configured
-- [ ] Alert notifications configured
+
+| Priority | Item | Notes |
+|----------|------|-------|
+| 🟡 | Application logs monitored | Watch for errors |
+| 🟡 | Server resources monitored (CPU, RAM, disk) | Performance |
+| 🟢 | Uptime monitoring configured | UptimeRobot, Pingdom |
+| 🟢 | Alert notifications configured | Email/SMS alerts |
 
 #### Backup
-- [ ] Configuration backup automated
-- [ ] Signed documents backup configured
-- [ ] Backup restoration tested
 
-#### Linux Service Setup
+| Priority | Item | Notes |
+|----------|------|-------|
+| 🟡 | Configuration backup automated | Daily backups |
+| 🟡 | Signed documents backup configured | Important documents |
+| 🟢 | Backup restoration tested | Verify backups work |
+
+#### Linux Service Setup (RECOMMENDED)
 
 Create systemd service for auto-start:
 
@@ -1056,7 +1093,7 @@ After=network.target
 Type=simple
 User=esign
 WorkingDirectory=/opt/esign-api
-ExecStart=/usr/bin/java -Xms1G -Xmx2G -jar esign-api-1.0.0.jar
+ExecStart=/usr/bin/java -Xms4G -Xmx6G -jar esign-api-1.0.0.jar
 Restart=on-failure
 RestartSec=10
 
@@ -1070,7 +1107,7 @@ sudo systemctl enable esign-api
 sudo systemctl start esign-api
 ```
 
-#### Windows Service Setup
+#### Windows Service Setup (OPTIONAL)
 
 Use NSSM (Non-Sucking Service Manager) or create a scheduled task to run on startup.
 
@@ -1079,17 +1116,24 @@ Use NSSM (Non-Sucking Service Manager) or create a scheduled task to run on star
 ### Go-Live Checklist
 
 #### Final Verification
-- [ ] All tests passed
-- [ ] Monitoring active
-- [ ] Backups verified
-- [ ] Documentation accessible
-- [ ] Support contacts known
+
+| Priority | Item | Notes |
+|----------|------|-------|
+| 🔴 | All MANDATORY tests passed | Required |
+| 🔴 | End-to-end signing works | Tested with real Aadhaar |
+| 🟡 | Monitoring active | Logs being collected |
+| 🟡 | Backups verified | Test restore |
+| 🟡 | Documentation accessible | Team can access |
+| 🟡 | Support contacts known | support@capricornid.com |
 
 #### Post Go-Live
-- [ ] Monitor closely for first 24-48 hours
-- [ ] Review logs daily for first week
-- [ ] Collect user feedback
-- [ ] Document any issues
+
+| Priority | Item | Notes |
+|----------|------|-------|
+| 🔴 | Monitor closely for first 24-48 hours | Watch for issues |
+| 🟡 | Review logs daily for first week | Check for errors |
+| 🟢 | Collect user feedback | Improve service |
+| 🟢 | Document any issues | For future reference |
 
 ---
 
@@ -1148,4 +1192,4 @@ Use NSSM (Non-Sucking Service Manager) or create a scheduled task to run on star
 
 ---
 
-**Version:** 1.0.0 | **Last Updated:** January 2026
+**Version:** 1.0.0 | **Last Updated:** December 2025

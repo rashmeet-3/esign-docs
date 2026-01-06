@@ -18,67 +18,67 @@
 
 ### Infrastructure Requirements
 
-| Priority | Item | Status |
-|----------|------|--------|
-| 🔴 | Server provisioned with minimum **8GB RAM, 8 CPU cores** | [ ] |
-| 🔴 | Java 17 JDK installed and verified | [ ] |
-| 🔴 | Firewall configured to allow port **8081** (REST API) | [ ] |
-| 🟡 | Firewall configured to allow port **8080** (Web UI) - if using Web UI | [ ] |
-| 🔴 | SSL/TLS certificate obtained for HTTPS | [ ] |
-| 🟡 | Reverse proxy configured (Nginx/Apache) for SSL termination | [ ] |
-| 🔴 | Domain name configured and DNS pointing to server | [ ] |
-| 🟡 | Backup storage configured for signed documents | [ ] |
+| Priority | Item |
+|----------|------|
+| 🔴 | Server provisioned with minimum **8GB RAM, 8 CPU cores** |
+| 🔴 | Java 17 JDK installed and verified |
+| 🔴 | Firewall configured to allow port **8081** (REST API) |
+| 🟡 | Firewall configured to allow port **8080** (Web UI) - if using Web UI |
+| 🔴 | SSL/TLS certificate obtained for HTTPS |
+| 🟡 | Reverse proxy configured (Nginx/Apache) for SSL termination |
+| 🔴 | Domain name configured and DNS pointing to server |
+| 🟡 | Backup storage configured for signed documents |
 
 ### Files from Capricorn (MANDATORY)
 
-| Priority | Item | Status |
-|----------|------|--------|
-| 🔴 | `eSignLicense` file received and placed in `config/` folder | [ ] |
-| 🔴 | `privatekey.pfx` certificate received and placed in `config/` folder | [ ] |
-| 🔴 | Certificate password received and noted securely | [ ] |
-| 🔴 | ASP ID received from Capricorn | [ ] |
-| 🔴 | ESP URLs received (Demo/Production) | [ ] |
+| Priority | Item |
+|----------|------|
+| 🔴 | `eSignLicense` file received and placed in `config/` folder |
+| 🔴 | `privatekey.pfx` certificate received and placed in `config/` folder |
+| 🔴 | Certificate password received and noted securely |
+| 🔴 | ASP ID received from Capricorn |
+| 🔴 | ESP URLs received (Demo/Production) |
 
 ### Security Requirements
 
-| Priority | Item | Status |
-|----------|------|--------|
-| 🔴 | eSign license file validated (not expired) | [ ] |
-| 🔴 | ASP certificate (.pfx) password secured | [ ] |
-| 🔴 | Certificate expiry checked (minimum 6 months validity) | [ ] |
-| 🟡 | Strong password set for certificate (12+ characters) | [ ] |
-| 🟡 | File permissions restricted on config directory | [ ] |
-| 🟡 | Firewall rules configured (allow only necessary ports) | [ ] |
-| 🟢 | SELinux/AppArmor configured | [ ] |
+| Priority | Item |
+|----------|------|
+| 🔴 | eSign license file validated (not expired) |
+| 🔴 | ASP certificate (.pfx) password secured |
+| 🔴 | Certificate expiry checked (minimum 6 months validity) |
+| 🟡 | Strong password set for certificate (12+ characters) |
+| 🟡 | File permissions restricted on config directory |
+| 🟡 | Firewall rules configured (allow only necessary ports) |
+| 🟢 | SELinux/AppArmor configured |
 
 ### Configuration
 
-| Priority | Item | Status |
-|----------|------|--------|
-| 🔴 | `application.properties` configured for production | [ ] |
-| 🔴 | Production ESP URLs set | [ ] |
-| 🔴 | Public callback URL (ngrok or domain) configured | [ ] |
-| 🔴 | ASP ID and credentials set | [ ] |
-| 🔴 | `api.auth.token` and `api.auth.key` set (your own secure values) | [ ] |
-| 🟡 | File paths configured | [ ] |
-| 🟡 | Upload limits set appropriately | [ ] |
-| 🟡 | Log level set to INFO or WARN | [ ] |
-| 🟢 | Log rotation configured | [ ] |
-| 🟢 | Session timeout configured | [ ] |
-| 🟡 | CORS settings configured for production domains | [ ] |
+| Priority | Item |
+|----------|------|
+| 🔴 | `application.properties` configured for production |
+| 🔴 | Production ESP URLs set |
+| 🔴 | Public callback URL (ngrok or domain) configured |
+| 🔴 | ASP ID and credentials set |
+| 🔴 | `api.auth.token` and `api.auth.key` set (your own secure values) |
+| 🟡 | File paths configured |
+| 🟡 | Upload limits set appropriately |
+| 🟡 | Log level set to INFO or WARN |
+| 🟢 | Log rotation configured |
+| 🟢 | Session timeout configured |
+| 🟡 | CORS settings configured for production domains |
 
 ### Testing
 
-| Priority | Item | Status |
-|----------|------|--------|
-| 🔴 | Application starts successfully | [ ] |
-| 🔴 | Configuration validated (license, certificate) | [ ] |
-| 🔴 | Health endpoint responds: `GET /api/v1/esign/health` | [ ] |
-| 🔴 | End-to-end signing tested with real Aadhaar OTP | [ ] |
-| 🔴 | ESP callbacks tested and verified | [ ] |
-| 🟡 | API endpoints tested with curl/Postman | [ ] |
-| 🟡 | Error handling tested | [ ] |
-| 🟢 | Load testing performed (if high volume expected) | [ ] |
+| Priority | Item |
+|----------|------|
+| 🔴 | Application starts successfully |
+| 🔴 | Configuration validated (license, certificate) |
+| 🔴 | Health endpoint responds: `GET /api/v1/esign/health` |
+| 🔴 | End-to-end signing tested with real Aadhaar OTP |
+| 🔴 | ESP callbacks tested and verified |
+| 🟡 | API endpoints tested with curl/Postman |
+| 🟡 | Error handling tested |
+| 🟢 | Load testing performed (if high volume expected) |
 
 ---
 
@@ -311,66 +311,66 @@ netsh advfirewall firewall add rule name="eSign API" dir=in action=allow protoco
 
 ## Post-Deployment Checklist
 
-### Verification 🔴 MANDATORY
+### Verification
 
-| Priority | Item | Status |
-|----------|------|--------|
-| 🔴 | Service running and responding | [ ] |
-| 🔴 | API endpoint accessible: `https://yourdomain.com/api/v1/esign/health` | [ ] |
-| 🔴 | SSL certificate valid and trusted | [ ] |
-| 🔴 | ESP callbacks working (test with real signing) | [ ] |
-| 🟡 | Service auto-starts on reboot | [ ] |
-| 🟡 | Logs being written correctly | [ ] |
+| Priority | Item |
+|----------|------|
+| 🔴 | Service running and responding |
+| 🔴 | API endpoint accessible: `https://yourdomain.com/api/v1/esign/health` |
+| 🔴 | SSL certificate valid and trusted |
+| 🔴 | ESP callbacks working (test with real signing) |
+| 🟡 | Service auto-starts on reboot |
+| 🟡 | Logs being written correctly |
 
-### Monitoring Setup 🟡 RECOMMENDED
+### Monitoring Setup
 
-| Priority | Item | Status |
-|----------|------|--------|
-| 🟡 | Application logs monitored | [ ] |
-| 🟡 | System resources monitored (CPU, RAM, disk) | [ ] |
-| 🟢 | Uptime monitoring configured (e.g., UptimeRobot, Pingdom) | [ ] |
-| 🟢 | Error alerting configured | [ ] |
-| 🟢 | Disk space alerts for data directories | [ ] |
+| Priority | Item |
+|----------|------|
+| 🟡 | Application logs monitored |
+| 🟡 | System resources monitored (CPU, RAM, disk) |
+| 🟢 | Uptime monitoring configured (e.g., UptimeRobot, Pingdom) |
+| 🟢 | Error alerting configured |
+| 🟢 | Disk space alerts for data directories |
 
-### Backup Configuration 🟡 RECOMMENDED
+### Backup Configuration
 
-| Priority | Item | Status |
-|----------|------|--------|
-| 🟡 | Configuration backup automated | [ ] |
-| 🟡 | Signed documents backup configured | [ ] |
-| 🟢 | Backup retention policy defined | [ ] |
-| 🟢 | Backup restoration tested | [ ] |
+| Priority | Item |
+|----------|------|
+| 🟡 | Configuration backup automated |
+| 🟡 | Signed documents backup configured |
+| 🟢 | Backup retention policy defined |
+| 🟢 | Backup restoration tested |
 
 ---
 
-## Security Hardening 🟡 RECOMMENDED
+## Security Hardening
 
 ### Application Security
 
-| Priority | Item | Status |
-|----------|------|--------|
-| 🔴 | HTTPS only (HTTP redirects to HTTPS) | [ ] |
-| 🟡 | Strong SSL/TLS configuration (TLS 1.2+) | [ ] |
-| 🟡 | CORS restricted to specific domains | [ ] |
-| 🟢 | File upload size limits enforced | [ ] |
+| Priority | Item |
+|----------|------|
+| 🔴 | HTTPS only (HTTP redirects to HTTPS) |
+| 🟡 | Strong SSL/TLS configuration (TLS 1.2+) |
+| 🟡 | CORS restricted to specific domains |
+| 🟢 | File upload size limits enforced |
 
 ### System Security
 
-| Priority | Item | Status |
-|----------|------|--------|
-| 🟡 | OS updates applied | [ ] |
-| 🟡 | Firewall configured (only necessary ports open) | [ ] |
-| 🟢 | SSH hardened (key-based auth, no root login) | [ ] |
-| 🟢 | Fail2ban configured | [ ] |
+| Priority | Item |
+|----------|------|
+| 🟡 | OS updates applied |
+| 🟡 | Firewall configured (only necessary ports open) |
+| 🟢 | SSH hardened (key-based auth, no root login) |
+| 🟢 | Fail2ban configured |
 
 ### Access Control
 
-| Priority | Item | Status |
-|----------|------|--------|
-| 🟡 | Service user has minimal permissions | [ ] |
-| 🟡 | Config files readable only by service user | [ ] |
-| 🟡 | Certificate files protected (chmod 600) | [ ] |
-| 🟢 | Admin access restricted to specific IPs | [ ] |
+| Priority | Item |
+|----------|------|
+| 🟡 | Service user has minimal permissions |
+| 🟡 | Config files readable only by service user |
+| 🟡 | Certificate files protected (chmod 600) |
+| 🟢 | Admin access restricted to specific IPs |
 
 ---
 
@@ -408,25 +408,25 @@ netsh advfirewall firewall add rule name="eSign API" dir=in action=allow protoco
 
 ## Go-Live Checklist
 
-### Final Verification 🔴 MANDATORY
+### Final Verification
 
-| Priority | Item | Status |
-|----------|------|--------|
-| 🔴 | All MANDATORY items completed | [ ] |
-| 🔴 | End-to-end signing tested in production | [ ] |
-| 🔴 | Monitoring active | [ ] |
-| 🟡 | RECOMMENDED items reviewed | [ ] |
-| 🟡 | Documentation accessible to team | [ ] |
-| 🟡 | Support contacts known | [ ] |
+| Priority | Item |
+|----------|------|
+| 🔴 | All MANDATORY items completed |
+| 🔴 | End-to-end signing tested in production |
+| 🔴 | Monitoring active |
+| 🟡 | RECOMMENDED items reviewed |
+| 🟡 | Documentation accessible to team |
+| 🟡 | Support contacts known |
 
-### Post-Go-Live 🟡 RECOMMENDED
+### Post-Go-Live
 
-| Priority | Item | Status |
-|----------|------|--------|
-| 🟡 | Monitor closely for first 24-48 hours | [ ] |
-| 🟡 | Review logs daily for first week | [ ] |
-| 🟢 | Collect user feedback | [ ] |
-| 🟢 | Performance metrics tracked | [ ] |
+| Priority | Item |
+|----------|------|
+| 🔴 | Monitor closely for first 24-48 hours |
+| 🟡 | Review logs daily for first week |
+| 🟢 | Collect user feedback |
+| 🟢 | Performance metrics tracked |
 
 ---
 
