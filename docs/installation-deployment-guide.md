@@ -7,18 +7,17 @@ Complete setup guide for Windows, Linux, and Mac.
 ## Table of Contents
 
 1. [Components Overview](#components-overview)
-2. [SDK Architecture & Dependencies](#sdk-architecture--dependencies)
-3. [What You Get from Capricorn (ESP)](#what-you-get-from-capricorn-esp)
-4. [What You Configure Yourself](#what-you-configure-yourself)
-5. [Prerequisites](#prerequisites)
-6. [Installation by Operating System](#installation-by-operating-system)
-7. [Configuration](#configuration)
-8. [Build & Deploy](#build--deploy)
-9. [Starting & Stopping Services](#starting--stopping-services)
-10. [Testing with ngrok](#testing-with-ngrok)
-11. [When to Rebuild](#when-to-rebuild)
-12. [Common Errors & Solutions](#common-errors--solutions)
-13. [Quick Reference](#quick-reference)
+2. [What You Get from Capricorn (ESP)](#what-you-get-from-capricorn-esp)
+3. [What You Configure Yourself](#what-you-configure-yourself)
+4. [Prerequisites](#prerequisites)
+5. [Installation by Operating System](#installation-by-operating-system)
+6. [Configuration](#configuration)
+7. [Build & Deploy](#build--deploy)
+8. [Starting & Stopping Services](#starting--stopping-services)
+9. [Testing with ngrok](#testing-with-ngrok)
+10. [When to Rebuild](#when-to-rebuild)
+11. [Common Errors & Solutions](#common-errors--solutions)
+12. [Quick Reference](#quick-reference)
 
 ---
 
@@ -33,69 +32,6 @@ Complete setup guide for Windows, Linux, and Mac.
 
 ---
 
-## SDK Architecture & Dependencies
-
-### IMPORTANT: esign-api DEPENDS on tomcat_esign!
-
-The SDK code lives in `tomcat_esign`. The `esign-api` project imports and uses these SDK classes.
-
-```
-┌─────────────────────────────────────────────────────────────────┐
-│                     SDK ARCHITECTURE                             │
-├─────────────────────────────────────────────────────────────────┤
-│                                                                  │
-│   tomcat_esign (br-esign-sdk)                                   │
-│   ┌───────────────────────────────┐                             │
-│   │  Core SDK Classes:            │                             │
-│   │  ├── ESign2_1.java (OTP)      │                             │
-│   │  ├── ESign3_2.java (eKYC)     │                             │
-│   │  ├── ESignService.java        │                             │
-│   │  ├── models/                  │                             │
-│   │  └── utils/                   │                             │
-│   │                               │                             │
-│   │  + Web UI (optional)          │                             │
-│   └───────────────────────────────┘                             │
-│               │                                                  │
-│               │ Maven Dependency                                 │
-│               │                                                  │
-│               │ In esign-api/pom.xml:                           │
-│               │ <dependency>                                     │
-│               │   <groupId>com.capricorn</groupId>              │
-│               │   <artifactId>br-esign-sdk</artifactId>         │
-│               │ </dependency>                                    │
-│               │                                                  │
-│               ▼                                                  │
-│   esign-api                                                      │
-│   ┌───────────────────────────────┐                             │
-│   │  Uses SDK via imports:        │                             │
-│   │  import ESign2_1;             │                             │
-│   │  import ESign3_2;             │                             │
-│   │                               │                             │
-│   │  REST API endpoints           │                             │
-│   └───────────────────────────────┘                             │
-│                                                                  │
-└─────────────────────────────────────────────────────────────────┘
-```
-
-### Build Order (Critical!)
-
-```
-Step 1: Build tomcat_esign with 'mvn install'
-        └── Compiles SDK code
-        └── Installs JAR to local Maven repository (~/.m2/)
-
-Step 2: Build esign-api with 'mvn package'
-        └── Maven finds SDK in local repository
-        └── Includes SDK classes in final JAR
-```
-
-**If you skip Step 1, esign-api build will FAIL with:**
-```
-Could not find artifact com.capricorn:br-esign-sdk:1.0.0
-```
-
----
-
 ## What You Get from Capricorn (ESP)
 
 When you register with **Capricorn Technologies** (the ESP Provider), they send you:
@@ -104,8 +40,8 @@ When you register with **Capricorn Technologies** (the ESP Provider), they send 
 
 | File | Description | Where to Place |
 |------|-------------|----------------|
-| `eSignLicense` | License file to activate SDK | `esign-api/config/eSignLicense` |
-| `privatekey.pfx` | Digital certificate for signing | `esign-api/config/privatekey.pfx` |
+| `eSignLicense` | License file to activate SDK | `config/eSignLicense` (in both projects) |
+| `privatekey.pfx` | Digital certificate for signing | `config/privatekey.pfx` (in both projects) |
 
 ### Credentials
 
@@ -239,70 +175,134 @@ ngrok version      # Any version
 
 ## Configuration
 
+**IMPORTANT:** Both `tomcat_esign` and `esign-api` need to be configured!
+
 ### Files to Configure
 
 ```
 esign-sdk-complete/
+├── tomcat_esign/
+│   ├── config/
+│   │   ├── eSignLicense              ← Replace with YOUR license
+│   │   └── privatekey.pfx            ← Replace with YOUR certificate
+│   └── src/main/resources/
+│       └── application.properties    ← Update settings
+│
 └── esign-api/
     ├── config/
-    │   ├── eSignLicense          ← Replace with YOUR license
-    │   └── privatekey.pfx        ← Replace with YOUR certificate
+    │   ├── eSignLicense              ← Replace with YOUR license
+    │   └── privatekey.pfx            ← Replace with YOUR certificate
     └── src/main/resources/
-        └── application.properties ← Update settings
+        └── application.properties    ← Update settings
 ```
 
-### Step 1: Replace License Files
+### Step 1: Replace License Files (Both Projects)
 
 ```bash
 # Windows
+copy "C:\path\to\your\eSignLicense" "tomcat_esign\config\"
+copy "C:\path\to\your\privatekey.pfx" "tomcat_esign\config\"
 copy "C:\path\to\your\eSignLicense" "esign-api\config\"
 copy "C:\path\to\your\privatekey.pfx" "esign-api\config\"
 
 # Linux/Mac
+cp /path/to/your/eSignLicense tomcat_esign/config/
+cp /path/to/your/privatekey.pfx tomcat_esign/config/
 cp /path/to/your/eSignLicense esign-api/config/
 cp /path/to/your/privatekey.pfx esign-api/config/
 ```
 
-### Step 2: Update application.properties
+### Step 2: Configure tomcat_esign
+
+Edit `tomcat_esign/src/main/resources/application.properties`:
+
+```properties
+server.port=8080
+
+# ========================================
+# ESP URLs (FROM CAPRICORN)
+# ========================================
+esign.2_1.esp.url=https://demo.esign.digital/esign/2.1/signdoc/
+esign.3_2.esp.url=https://demo.esign.digital/esign/3.2/signdoc/
+
+# ========================================
+# Callback URLs (YOUR ngrok/domain URL)
+# ========================================
+esign.2_1.response.url=https://YOUR-NGROK-URL.ngrok-free.dev/api/esign/esp-response
+esign.3_2.response.url=https://YOUR-NGROK-URL.ngrok-free.dev/api/esign/3.2/getdocs/
+esign.3_2.redirect.url=https://YOUR-NGROK-URL.ngrok-free.dev/api/esign/3.2/callback/
+esign.base.url=https://YOUR-NGROK-URL.ngrok-free.dev
+
+# ========================================
+# Credentials (FROM CAPRICORN)
+# ========================================
+esign.asp.id=YOUR_ASP_ID
+esign.3_2.signer.id=youruser@yourcompany.capricorn
+esign.certificate.password=YOUR_CERTIFICATE_PASSWORD
+
+# ========================================
+# File Paths (usually no change needed)
+# ========================================
+esign.license.path=./config/eSignLicense
+esign.certificate.path=./config/privatekey.pfx
+esign.temp.path=./temp/
+esign.output.path=./signed/
+```
+
+### Step 3: Configure esign-api
 
 Edit `esign-api/src/main/resources/application.properties`:
 
 ```properties
-# Server
 server.port=8081
 
+# ========================================
 # YOUR Public URL (ngrok or domain)
+# ========================================
 api.base-url=https://YOUR-NGROK-URL.ngrok-free.dev
 
+# ========================================
 # API Authentication (YOU CREATE THESE)
+# ========================================
 api.auth.token=YOUR_TOKEN
 api.auth.key=YOUR_KEY
 
-# ESP Configuration (FROM CAPRICORN)
+# ========================================
+# ESP URLs (FROM CAPRICORN)
+# ========================================
 esign.2_1.esp.url=https://demo.esign.digital/esign/2.1/signdoc/
 esign.3_2.esp.url=https://demo.esign.digital/esign/3.2/signdoc/
 
+# ========================================
 # Credentials (FROM CAPRICORN)
+# ========================================
 esign.asp.id=YOUR_ASP_ID
-esign.3_2.signer.id=youruser@capricorn
-esign.certificate.password=YOUR_PASSWORD
+esign.3_2.signer.id=youruser@yourcompany.capricorn
+esign.certificate.password=YOUR_CERTIFICATE_PASSWORD
 
-# File paths
+# ========================================
+# File Paths (usually no change needed)
+# ========================================
 esign.license.path=./config/eSignLicense
 esign.certificate.path=./config/privatekey.pfx
 ```
 
 ### Configuration Summary
 
-| Property | Source |
-|----------|--------|
-| `api.base-url` | Your ngrok URL |
-| `api.auth.token` | You create |
-| `api.auth.key` | You create |
-| `esign.2_1.esp.url` | From Capricorn |
-| `esign.3_2.esp.url` | From Capricorn |
-| `esign.asp.id` | From Capricorn |
-| `esign.certificate.password` | From Capricorn |
+| Property | Source | Configure In |
+|----------|--------|--------------|
+| `api.base-url` | Your ngrok URL | esign-api only |
+| `api.auth.token` | You create | esign-api only |
+| `api.auth.key` | You create | esign-api only |
+| `esign.2_1.esp.url` | From Capricorn | Both |
+| `esign.3_2.esp.url` | From Capricorn | Both |
+| `esign.asp.id` | From Capricorn | Both |
+| `esign.3_2.signer.id` | From Capricorn | Both |
+| `esign.certificate.password` | From Capricorn | Both |
+| `esign.base.url` | Your ngrok URL | tomcat_esign only |
+| `esign.2_1.response.url` | Your ngrok URL + path | tomcat_esign only |
+| `esign.3_2.response.url` | Your ngrok URL + path | tomcat_esign only |
+| `esign.3_2.redirect.url` | Your ngrok URL + path | tomcat_esign only |
 
 ---
 
@@ -322,15 +322,8 @@ build.bat
 
 ### What Build Does
 
-```
-build.bat / build.sh
-        │
-        ├── Step 1: cd tomcat_esign && mvn clean install
-        │           └── Builds SDK and installs to Maven repo
-        │
-        └── Step 2: cd esign-api && mvn clean package
-                    └── Builds API using SDK from Maven repo
-```
+1. Builds `tomcat_esign` first with `mvn install` (installs SDK to Maven repo)
+2. Builds `esign-api` second with `mvn package` (uses SDK from Maven repo)
 
 ### Manual Build
 
@@ -349,8 +342,6 @@ mvn clean package -DskipTests
 ```
 tomcat_esign/target/br-esign-sdk-1.0.0.jar    (Core SDK + Web UI)
 esign-api/target/esign-api-1.0.0.jar          (REST API)
-
-~/.m2/repository/com/capricorn/br-esign-sdk/  (SDK in Maven repo)
 ```
 
 ---
@@ -416,9 +407,19 @@ ngrok http 8081
 
 Copy the URL: `https://abc123.ngrok-free.dev`
 
-**Update configuration:**
+**Update configuration in BOTH projects:**
+
+In `esign-api/src/main/resources/application.properties`:
 ```properties
 api.base-url=https://abc123.ngrok-free.dev
+```
+
+In `tomcat_esign/src/main/resources/application.properties`:
+```properties
+esign.2_1.response.url=https://abc123.ngrok-free.dev/api/esign/esp-response
+esign.3_2.response.url=https://abc123.ngrok-free.dev/api/esign/3.2/getdocs/
+esign.3_2.redirect.url=https://abc123.ngrok-free.dev/api/esign/3.2/callback/
+esign.base.url=https://abc123.ngrok-free.dev
 ```
 
 **Rebuild and restart:**
@@ -436,7 +437,7 @@ curl https://abc123.ngrok-free.dev/api/v1/esign/health
 
 Every time ngrok restarts, you get a new URL. You must:
 1. Copy new ngrok URL
-2. Update `api.base-url` in application.properties
+2. Update BOTH `application.properties` files
 3. Rebuild: `./build.sh`
 4. Restart: `./start.sh`
 
@@ -446,13 +447,12 @@ Every time ngrok restarts, you get a new URL. You must:
 
 ### Quick Reference
 
-| What Changed | Rebuild tomcat_esign? | Rebuild esign-api? |
-|--------------|----------------------|-------------------|
-| SDK code (ESign2_1, etc.) | ✅ Yes (`mvn install`) | ✅ Yes (after) |
-| esign-api code only | ❌ No | ✅ Yes |
-| application.properties | ❌ No | ✅ Yes |
-| License files | ❌ No | ❌ No (just restart) |
-| ngrok URL changed | ❌ No | ✅ Yes |
+| What Changed | Rebuild Needed? | Action |
+|--------------|-----------------|--------|
+| License files only | ❌ No | Just restart |
+| `application.properties` | ✅ Yes | Rebuild + Restart |
+| ngrok URL changed | ✅ Yes | Rebuild + Restart |
+| Java source code | ✅ Yes | Rebuild + Restart |
 
 ### Avoid Rebuild with External Config
 
@@ -517,7 +517,7 @@ License file not found: ./config/eSignLicense
 ```
 
 **Solution:**
-1. Check file exists in `esign-api/config/`
+1. Check file exists in `config/` folder of BOTH projects
 2. Filename must be exactly `eSignLicense` (case-sensitive)
 
 ---
@@ -529,7 +529,7 @@ keystore password was incorrect
 ```
 
 **Solution:**
-Verify `esign.certificate.password` matches what Capricorn provided.
+Verify `esign.certificate.password` matches what Capricorn provided (in BOTH projects).
 
 ---
 
@@ -574,6 +574,19 @@ Then rebuild.
 
 ---
 
+### Error: ESP Callback Failed
+
+```
+ESP callback URL not reachable
+```
+
+**Solution:**
+1. Verify ngrok is running
+2. Check ngrok URL is correct in BOTH `application.properties`
+3. Rebuild and restart
+
+---
+
 ## Quick Reference
 
 ### Commands
@@ -598,9 +611,12 @@ Then rebuild.
 
 | File | Purpose |
 |------|---------|
-| `esign-api/src/main/resources/application.properties` | Configuration |
-| `esign-api/config/eSignLicense` | License |
-| `esign-api/config/privatekey.pfx` | Certificate |
+| `tomcat_esign/src/main/resources/application.properties` | tomcat_esign configuration |
+| `esign-api/src/main/resources/application.properties` | esign-api configuration |
+| `tomcat_esign/config/eSignLicense` | License (tomcat_esign) |
+| `esign-api/config/eSignLicense` | License (esign-api) |
+| `tomcat_esign/config/privatekey.pfx` | Certificate (tomcat_esign) |
+| `esign-api/config/privatekey.pfx` | Certificate (esign-api) |
 
 ---
 
