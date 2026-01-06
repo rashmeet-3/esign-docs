@@ -842,4 +842,258 @@ ESP callback URL not reachable
 
 ---
 
+## Deployment Checklist
+
+### Pre-Deployment Checklist
+
+#### Prerequisites
+- [ ] Java 17+ installed and verified (`java -version`)
+- [ ] ngrok installed and configured with authtoken
+- [ ] ngrok account created (free tier is fine)
+- [ ] Package extracted successfully
+
+#### Files from Capricorn (ESP Provider)
+- [ ] `eSignLicense` file received
+- [ ] `privatekey.pfx` certificate received
+- [ ] Certificate password received
+- [ ] ASP ID received
+- [ ] Signer ID received (for eSign 3.2 mode)
+- [ ] ESP URLs received (demo and/or production)
+
+#### Files Placed Correctly
+- [ ] `eSignLicense` copied to `esign-api/config/`
+- [ ] `privatekey.pfx` copied to `esign-api/config/`
+- [ ] (Optional) Files also copied to `tomcat_esign/config/` if using Web UI
+
+---
+
+### Configuration Checklist
+
+#### esign-api/application.properties
+
+| Setting | Configured? | Value |
+|---------|-------------|-------|
+| `api.base-url` | [ ] | Your ngrok URL |
+| `api.auth.token` | [ ] | Your custom token |
+| `api.auth.key` | [ ] | Your custom key |
+| `esign.asp.id` | [ ] | From Capricorn |
+| `esign.certificate.password` | [ ] | From Capricorn |
+| `esign.3_2.signer.id` | [ ] | From Capricorn |
+| `esign.2_1.esp.url` | [ ] | From Capricorn |
+| `esign.3_2.esp.url` | [ ] | From Capricorn |
+
+#### tomcat_esign/application.properties (Only if using Web UI)
+
+| Setting | Configured? | Value |
+|---------|-------------|-------|
+| `esign.base.url` | [ ] | Your ngrok URL |
+| `esign.2_1.response.url` | [ ] | ngrok URL + callback path |
+| `esign.3_2.response.url` | [ ] | ngrok URL + callback path |
+| `esign.asp.id` | [ ] | From Capricorn |
+| `esign.certificate.password` | [ ] | From Capricorn |
+
+---
+
+### Startup Checklist
+
+#### ngrok
+- [ ] ngrok running in separate terminal (`ngrok http 8081`)
+- [ ] ngrok URL copied and updated in config
+- [ ] ngrok shows "Session Status: online"
+
+#### Server
+- [ ] Server started successfully (`start.bat` or `./start.sh`)
+- [ ] No errors in startup log
+- [ ] "Started ESignApiApplication" message shown
+
+---
+
+### Testing Checklist
+
+#### Health Check
+- [ ] Local health check works:
+    ```
+    curl http://localhost:8081/api/v1/esign/health
+    ```
+    Response: `{"status":"UP"}`
+
+- [ ] ngrok health check works:
+    ```
+    curl https://YOUR-NGROK-URL.ngrok-free.dev/api/v1/esign/health
+    ```
+    Response: `{"status":"UP"}`
+
+#### API Authentication
+- [ ] API responds with auth error without credentials (expected)
+- [ ] API responds successfully with correct token and key
+
+#### End-to-End Test
+- [ ] Test PDF uploaded successfully
+- [ ] Redirect URL generated
+- [ ] ESP page loads correctly
+- [ ] OTP/Authentication completes
+- [ ] Signed PDF returned successfully
+- [ ] Callback received by server
+
+---
+
+### Security Checklist
+
+#### Credentials
+- [ ] `api.auth.token` is a strong, unique value
+- [ ] `api.auth.key` is a strong, unique value
+- [ ] Certificate password not shared in code/logs
+- [ ] Config files not committed to public repositories
+
+#### File Permissions (Linux/Mac)
+- [ ] Certificate file secured:
+    ```bash
+    chmod 600 esign-api/config/privatekey.pfx
+    ```
+- [ ] Config directory not world-readable:
+    ```bash
+    chmod 700 esign-api/config/
+    ```
+
+---
+
+### Production Deployment Checklist
+
+!!! warning "For Production Use"
+    These additional steps are recommended for production environments.
+
+#### Infrastructure
+- [ ] Server provisioned (minimum 4GB RAM, 2 CPU cores)
+- [ ] Domain name configured
+- [ ] SSL/TLS certificate obtained
+- [ ] Reverse proxy configured (Nginx/Apache)
+- [ ] Firewall configured
+
+#### Production Configuration
+- [ ] Production ESP URLs configured (not demo)
+- [ ] Production domain used instead of ngrok
+- [ ] HTTPS enforced
+- [ ] Logging configured appropriately
+- [ ] Log rotation configured
+
+#### Monitoring
+- [ ] Application logs monitored
+- [ ] Server resources monitored (CPU, RAM, disk)
+- [ ] Uptime monitoring configured
+- [ ] Alert notifications configured
+
+#### Backup
+- [ ] Configuration backup automated
+- [ ] Signed documents backup configured
+- [ ] Backup restoration tested
+
+#### Linux Service Setup
+
+Create systemd service for auto-start:
+
+```bash
+sudo nano /etc/systemd/system/esign-api.service
+```
+
+```ini
+[Unit]
+Description=eSign API Service
+After=network.target
+
+[Service]
+Type=simple
+User=esign
+WorkingDirectory=/opt/esign-api
+ExecStart=/usr/bin/java -Xms1G -Xmx2G -jar esign-api-1.0.0.jar
+Restart=on-failure
+RestartSec=10
+
+[Install]
+WantedBy=multi-user.target
+```
+
+```bash
+sudo systemctl daemon-reload
+sudo systemctl enable esign-api
+sudo systemctl start esign-api
+```
+
+#### Windows Service Setup
+
+Use NSSM (Non-Sucking Service Manager) or create a scheduled task to run on startup.
+
+---
+
+### Go-Live Checklist
+
+#### Final Verification
+- [ ] All tests passed
+- [ ] Monitoring active
+- [ ] Backups verified
+- [ ] Documentation accessible
+- [ ] Support contacts known
+
+#### Post Go-Live
+- [ ] Monitor closely for first 24-48 hours
+- [ ] Review logs daily for first week
+- [ ] Collect user feedback
+- [ ] Document any issues
+
+---
+
+### Quick Verification Commands
+
+=== "Windows"
+
+    ```cmd
+    :: Check Java
+    java -version
+    
+    :: Check server running
+    curl http://localhost:8081/api/v1/esign/health
+    
+    :: Check ngrok tunnel
+    curl https://YOUR-URL.ngrok-free.dev/api/v1/esign/health
+    
+    :: Check port in use
+    netstat -ano | findstr :8081
+    ```
+
+=== "Linux"
+
+    ```bash
+    # Check Java
+    java -version
+    
+    # Check server running
+    curl http://localhost:8081/api/v1/esign/health
+    
+    # Check ngrok tunnel
+    curl https://YOUR-URL.ngrok-free.dev/api/v1/esign/health
+    
+    # Check port in use
+    lsof -i :8081
+    
+    # Check service status (if using systemd)
+    sudo systemctl status esign-api
+    ```
+
+=== "Mac"
+
+    ```bash
+    # Check Java
+    java -version
+    
+    # Check server running
+    curl http://localhost:8081/api/v1/esign/health
+    
+    # Check ngrok tunnel
+    curl https://YOUR-URL.ngrok-free.dev/api/v1/esign/health
+    
+    # Check port in use
+    lsof -i :8081
+    ```
+
+---
+
 **Version:** 1.0.0 | **Last Updated:** January 2026

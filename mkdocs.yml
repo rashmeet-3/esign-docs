@@ -50,12 +50,13 @@ nav:
   
   - Installation & Setup:
     - Complete Installation Guide: installation-deployment-guide.md
+    - Deployment Checklist: deployment-checklist.md
   
-  - Java SDK:
+  - Java SDK (Web UI):
     - Quick Start Guide: quick-start-guide.md
     - Technical Documentation Part 1: eSign-sdk-technical-documentation.md
     - Technical Documentation Part 2: eSign-sdk-technical-documentation-part2.md
-    - Deployment Checklist: deployment-checklist.md
+    - Web UI Internal API: web-ui-internal-api.md
   
   - Android SDK:
     - Quick Start: android-sdk-quickstart.md
@@ -65,9 +66,13 @@ nav:
     - Quick Start: js-sdk-quickstart.md
     - Complete Guide: js-sdk-guide.md
   
-  - API Reference:
-    - API Reference Card: api-reference-card.md
-    - eSign API Guide: esign-api-guide.md
+  - REST API Reference:
+    - Quick Reference: rest-api-reference.md
+    - Complete API Guide: esign-api-guide.md
+  
+  - Version & Support:
+    - Changelog: changelog.md
+    - Versioning Policy: versioning-policy.md
 
 extra:
   version:
