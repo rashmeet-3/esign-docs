@@ -41,6 +41,58 @@ flowchart LR
 
 ---
 
+## What You Get from Capricorn (ESP Provider)
+
+Before starting installation, ensure you have received the following from **Capricorn Technologies** (your ESP provider):
+
+### Files
+
+| File | Description | Where to Place |
+|------|-------------|----------------|
+| `eSignLicense` | License file to activate SDK | `esign-api/config/` |
+| `privatekey.pfx` | Digital certificate for signing | `esign-api/config/` |
+
+### Credentials
+
+| Credential | Description | Example |
+|------------|-------------|---------|
+| **ASP ID** | Your organization's unique identifier | `yourcompanyaspid` |
+| **Signer ID** | eKYC signer identifier (for eSign 3.2 mode) | `user@yourcompany.capricorn` |
+| **Certificate Password** | Password for privatekey.pfx | `your_password` |
+| **ESP URL (2.1)** | OTP signing endpoint | `https://esign.cdac.in/esign/2.1/signdoc/` |
+| **ESP URL (3.2)** | eKYC signing endpoint | `https://esign.cdac.in/esign/3.2/signdoc/` |
+
+### Demo vs Production URLs
+
+| Environment | Purpose | URL Type |
+|-------------|---------|----------|
+| **Demo/Sandbox** | Testing and development | `https://demo.esign...` |
+| **Production** | Live document signing | `https://esign...` |
+
+!!! warning "Don't Have These Yet?"
+    Contact Capricorn Technologies to:
+    
+    1. Complete registration process
+    2. Sign agreement and pay fees
+    3. Receive credentials via secure channel
+
+---
+
+## What You Configure Yourself
+
+These are **NOT** from Capricorn - you create them:
+
+| Setting | Description | Example |
+|---------|-------------|---------|
+| `api.auth.token` | Any secure string for API authentication | `MySecureToken123!@#` |
+| `api.auth.key` | Any secure string for API authentication | `MySecureKey456$%^` |
+| `api.base-url` | Your ngrok URL (or production domain) | `https://abc123.ngrok-free.dev` |
+
+!!! tip "Security Tip"
+    Use strong, random strings for `token` and `key`. These authenticate your JavaScript/Android SDK clients.
+
+---
+
 ## Step 1: Install Java
 
 === "Windows"

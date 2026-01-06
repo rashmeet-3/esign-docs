@@ -74,19 +74,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
-## Upcoming (Planned)
-
-### [1.1.0] - TBD
-- Performance improvements
-- Additional date format options
-- Enhanced error messages
-
-### [2.0.0] - TBD
-- Breaking changes (if any)
-- Major feature additions
-
----
-
 ## Support Policy
 
 | Version | Status | Support Until |

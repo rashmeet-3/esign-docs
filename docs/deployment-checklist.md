@@ -10,7 +10,7 @@
 
 - [ ] **Server provisioned** with minimum 4GB RAM, 2 CPU cores
 - [ ] **Java 17 JDK** installed and verified
-- [ ] **Firewall configured** to allow port 8080 (or custom port)
+- [ ] **Firewall configured** to allow port 8081 (REST API) and optionally 8080 (Web UI)
 - [ ] **SSL/TLS certificate** obtained for HTTPS
 - [ ] **Reverse proxy** configured (Nginx/Apache) for SSL termination
 - [ ] **Domain name** configured and DNS pointing to server
@@ -117,17 +117,17 @@ sudo systemctl status esign-sdk
 #### Step 6: Configure Firewall
 ```bash
 # UFW (Ubuntu/Debian)
-sudo ufw allow 8080/tcp
+sudo ufw allow 8081/tcp
 sudo ufw reload
 
 # firewalld (CentOS/RHEL)
-sudo firewall-cmd --permanent --add-port=8080/tcp
+sudo firewall-cmd --permanent --add-port=8081/tcp
 sudo firewall-cmd --reload
 ```
 
 #### Step 7: Configure Nginx Reverse Proxy
 ```bash
-sudo nano /etc/nginx/sites-available/esign-sdk
+sudo nano /etc/nginx/sites-available/esign-api
 ```
 
 ```nginx
@@ -149,7 +149,7 @@ server {
     client_max_body_size 50M;
 
     location / {
-        proxy_pass http://localhost:8080;
+        proxy_pass http://localhost:8081;
         proxy_set_header Host $host;
         proxy_set_header X-Real-IP $remote_addr;
         proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
@@ -159,7 +159,7 @@ server {
 ```
 
 ```bash
-sudo ln -s /etc/nginx/sites-available/esign-sdk /etc/nginx/sites-enabled/
+sudo ln -s /etc/nginx/sites-available/esign-api /etc/nginx/sites-enabled/
 sudo nginx -t
 sudo systemctl reload nginx
 ```
@@ -203,7 +203,7 @@ java -Xms2G -Xmx4G -jar esign-sdk-1.0.jar >> logs\esign-sdk.log 2>&1
 
 #### Step 4: Configure Firewall
 ```powershell
-netsh advfirewall firewall add rule name="eSign SDK" dir=in action=allow protocol=TCP localport=8080
+netsh advfirewall firewall add rule name="eSign API" dir=in action=allow protocol=TCP localport=8081
 ```
 
 ---

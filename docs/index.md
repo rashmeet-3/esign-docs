@@ -1,8 +1,6 @@
 # eSign SDK Documentation
 
-<div style="text-align: center; margin: 20px 0;">
-  <strong>Version 1.0.0</strong> | Released: December 15, 2025
-</div>
+**Version 1.0.0** | Released: December 15, 2025
 
 ---
 
@@ -21,25 +19,10 @@ Complete technical documentation for the **eSign SDK** - a digital signature sol
 
 ## Quick Start
 
-<div class="grid cards" markdown>
-
--   :material-rocket-launch:{ .lg .middle } **Get Started in 10 Minutes**
-
-    ---
-
-    Install, configure, and run your first signing test.
-
-    [:octicons-arrow-right-24: Installation Guide](installation-deployment-guide.md)
-
--   :material-api:{ .lg .middle } **REST API Reference**
-
-    ---
-
-    Complete API documentation for SDK integration.
-
-    [:octicons-arrow-right-24: API Reference](rest-api-reference.md)
-
-</div>
+| Guide | Description |
+|-------|-------------|
+| [🚀 Installation Guide](installation-deployment-guide.md) | Get started in 10 minutes - Install, configure, and run your first signing test |
+| [📖 REST API Reference](rest-api-reference.md) | Complete API documentation for SDK integration |
 
 ---
 
