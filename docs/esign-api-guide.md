@@ -27,7 +27,8 @@ The eSign API provides a REST interface for digitally signing PDF documents usin
 11. [Check Transaction Status](#11-check-transaction-status)
 12. [Webhook Callbacks](#12-webhook-callbacks)
 13. [Error Codes](#13-error-codes)
-14. [Complete Examples](#14-complete-examples)
+14. [Transaction ID Uniqueness](#14-transaction-id-uniqueness)
+15. [Complete Examples](#15-complete-examples)
 
 ---
 
@@ -471,18 +472,133 @@ If `callbackurl` is provided, a POST request is sent when signing completes or f
 
 ## 13. Error Codes
 
-| Code | Description |
-|------|-------------|
-| `AUTH_001` | Invalid authentication token |
-| `VAL_001` | Missing required field |
-| `VAL_003` | Invalid mode specified |
-| `ESP_001` | User cancelled signing |
-| `ESP_002` | OTP verification failed |
-| `ESP_003` | Aadhaar authentication failed |
+### Authentication Errors
+
+| Code | Description | Solution |
+|------|-------------|----------|
+| `AUTH_001` | Invalid authentication token | Check `api.auth.token` in your request matches server config |
+| `AUTH_002` | Invalid authentication key | Check `api.auth.key` in your request matches server config |
+| `AUTH_003` | Missing authentication | Include `auth` block in request |
+
+### Validation Errors
+
+| Code | Description | Solution |
+|------|-------------|----------|
+| `VAL_001` | Missing required field | Check all required fields are present (pdf64/pdfurl, title, mode, signername) |
+| `VAL_002` | Invalid PDF data | Ensure PDF is valid and properly Base64 encoded |
+| `VAL_003` | Invalid mode specified | Use valid mode: `online-aadhaar-otp`, `online-aadhaar-bio`, `online-aadhaar-iris`, `online-aadhaar-face`, or `capricorn-ekyc-account` |
+| `VAL_004` | Invalid page selection | Use valid pagenum: `1`, `all`, `first`, `last`, `1-3`, or `1,3,5` |
+| `VAL_005` | Invalid coordinates | Ensure cood format is `x1,y1,x2,y2` with valid numbers |
+| `VAL_006` | Title too long | Title must be 50 characters or less |
+| `VAL_007` | Invalid date format | Check dateformat pattern is valid |
+
+### Transaction Errors
+
+| Code | Description | Solution |
+|------|-------------|----------|
+| `TXN_DUPLICATE` | Transaction ID already used | Use a unique transaction ID (see below) |
+| `TXN_NOT_FOUND` | Transaction not found | Check reference ID is correct |
+| `TXN_EXPIRED` | Transaction expired | Start a new signing request |
+
+### ESP (eSign Provider) Errors
+
+| Code | Description | Solution |
+|------|-------------|----------|
+| `ESP_001` | User cancelled signing | User chose to cancel - no action needed |
+| `ESP_002` | OTP verification failed | User entered wrong OTP - retry signing |
+| `ESP_003` | Aadhaar authentication failed | Aadhaar verification failed - check Aadhaar details |
+| `ESP_004` | ESP server unavailable | ESP server down - retry later |
+| `ESP_005` | ESP callback failed | Check callback URL is accessible |
+| `ESP_006` | Signature generation failed | Contact ESP provider |
+
+### Processing Errors
+
+| Code | Description | Solution |
+|------|-------------|----------|
+| `PROC_001` | PDF data required | Provide either `pdf64` or `pdfurl` |
+| `PROC_002` | Unsupported authentication mode | Use supported mode for your ESP configuration |
+| `PROC_003` | PDF processing failed | Check PDF is not corrupted or password protected |
+| `PROC_004` | Signature embedding failed | Contact support |
+
+### License Errors
+
+| Code | Description | Solution |
+|------|-------------|----------|
+| `LIC_001` | License file not found | Place `eSignLicense` in `config/` folder |
+| `LIC_002` | License expired | Contact Capricorn for license renewal |
+| `LIC_003` | License invalid | Check license file is correct |
+
+### Certificate Errors
+
+| Code | Description | Solution |
+|------|-------------|----------|
+| `CERT_001` | Certificate file not found | Place `privatekey.pfx` in `config/` folder |
+| `CERT_002` | Certificate password incorrect | Check `esign.certificate.password` in config |
+| `CERT_003` | Certificate expired | Contact Capricorn for certificate renewal |
+
+### Error Response Format
+
+**JSON Error Response:**
+```json
+{
+    "success": "FAIL",
+    "errorcode": "TXN_DUPLICATE",
+    "errormessage": "Transaction ID 'ORDER-12345' has already been used for a completed signing. Each transaction ID can only be used once. Please use a unique transaction ID."
+}
+```
+
+**XML Error Response:**
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<response>
+    <success>FAIL</success>
+    <errorcode>TXN_DUPLICATE</errorcode>
+    <errormessage>Transaction ID 'ORDER-12345' has already been used for a completed signing. Each transaction ID can only be used once. Please use a unique transaction ID.</errormessage>
+</response>
+```
 
 ---
 
-## 14. Complete Examples
+## 14. Transaction ID Uniqueness
+
+### Overview
+
+Once a PDF is successfully signed with a transaction ID (`txn`), that ID **cannot be used again**. This prevents duplicate signing and ensures each transaction is unique.
+
+### How It Works
+
+1. You send a request with `txn: "ORDER-12345"`
+2. User completes signing successfully
+3. Transaction `ORDER-12345` is marked as **COMPLETED**
+4. Any future request with `txn: "ORDER-12345"` returns `TXN_DUPLICATE` error
+
+### Best Practices for Transaction IDs
+
+| Practice | Example |
+|----------|---------|
+| Use unique identifiers | `ORDER-12345`, `INV-2025-001`, `CONTRACT-ABC123` |
+| Include timestamp | `DOC-20251215-143052-001` |
+| Use UUID | `550e8400-e29b-41d4-a716-446655440000` |
+| Prefix by document type | `LOAN-001`, `KYC-002`, `AGREEMENT-003` |
+
+### Handling TXN_DUPLICATE Error
+
+```javascript
+// JavaScript example
+try {
+    const result = await client.signDocument(request);
+} catch (error) {
+    if (error.code === 'TXN_DUPLICATE') {
+        // Generate new transaction ID and retry
+        request.txn = generateUniqueId();
+        const result = await client.signDocument(request);
+    }
+}
+```
+
+---
+
+## 15. Complete Examples
 
 ### Example 1: OTP Mode
 
