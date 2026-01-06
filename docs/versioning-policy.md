@@ -222,7 +222,7 @@ val version = ESignClient.VERSION // "1.0.0"
 
 If you have questions about versioning or compatibility:
 
-- **Email:** support@esign.network
+- **Email:** support@capricornid.com
 - **Website:** https://www.esign.network
 
 ---

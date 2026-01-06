@@ -85,7 +85,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Reporting Issues
 
 If you encounter any issues, please contact:
-- **Email:** support@esign.network
+- **Email:** support@capricornid.com
 - **Website:** https://www.esign.network
 
 ---

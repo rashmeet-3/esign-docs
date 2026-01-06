@@ -116,7 +116,7 @@ done
 - Read full [Technical Documentation](eSign-sdk-technical-documentation.md)
 - Configure for production
 - Review Security Best Practices
-- Contact support: support@www.esign.network
+- Contact support: support@capricornid.com
 
 ---
 
@@ -147,7 +147,7 @@ tail -f logs/esign-sdk.log
 ## Support
 
 - **Documentation**: See full technical documentation
-- **Email**: support@www.esign.network
+- **Email**: support@capricornid.com
 - **Website**: https://www.esign.network/esign-sdk
 
 ---

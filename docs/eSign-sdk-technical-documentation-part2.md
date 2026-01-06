@@ -1165,7 +1165,7 @@ esign-sdk-1.0/
 - CCA Guidelines: https://cca.gov.in
 
 **Support:**
-- Email: support@www.esign.network
+- Email: support@capricornid.com
 - Phone: +91-XXX-XXX-XXXX
 - Website: https://www.esign.network/esign-sdk
 

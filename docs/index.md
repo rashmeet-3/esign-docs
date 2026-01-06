@@ -134,7 +134,7 @@ See [Changelog](changelog.md) for complete details.
 
 | Channel | Contact |
 |---------|---------|
-| **Email** | support@esign.network |
+| **Email** | support@capricornid.com |
 | **Website** | https://www.esign.network |
 
 ---
