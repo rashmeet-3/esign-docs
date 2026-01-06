@@ -1,89 +1,29 @@
 # eSign SDK - Complete Installation Guide
 
-Complete setup guide for Windows, Linux, and Mac.
+Complete setup guide with step-by-step instructions for Windows, Linux, and Mac.
 
 ---
 
-## Table of Contents
+## ⏱️ Quick Overview
 
-1. [Components Overview](#components-overview)
-2. [What You Get from Capricorn (ESP)](#what-you-get-from-capricorn-esp)
-3. [What You Configure Yourself](#what-you-configure-yourself)
-4. [Prerequisites](#prerequisites)
-5. [Installation by Operating System](#installation-by-operating-system)
-6. [Configuration](#configuration)
-7. [Build & Deploy](#build--deploy)
-8. [Starting & Stopping Services](#starting--stopping-services)
-9. [Testing with ngrok](#testing-with-ngrok)
-10. [When to Rebuild](#when-to-rebuild)
-11. [Common Errors & Solutions](#common-errors--solutions)
-12. [Quick Reference](#quick-reference)
-
----
-
-## Components Overview
-
-| Component | Port | Description |
-|-----------|------|-------------|
-| **tomcat_esign** | 8080 | Core SDK + Web UI (browser testing) |
-| **esign-api** | 8081 | REST API for JavaScript/Android SDKs |
-| **JavaScript SDK** | - | Browser-based client library |
-| **Android SDK (AAR)** | - | Mobile client library |
-
----
-
-## What You Get from Capricorn (ESP)
-
-When you register with **Capricorn Technologies** (the ESP Provider), they send you:
-
-### Files
-
-| File | Description | Where to Place |
-|------|-------------|----------------|
-| `eSignLicense` | License file to activate SDK | `config/eSignLicense` (in both projects) |
-| `privatekey.pfx` | Digital certificate for signing | `config/privatekey.pfx` (in both projects) |
-
-### Credentials
-
-| Credential | Description | Example |
-|------------|-------------|---------|
-| **ASP ID** | Your organization's unique ID | `yourcompanyaspid` |
-| **Signer ID** | eKYC signer identifier (for 3.2 mode) | `user@yourcompany.capricorn` |
-| **Certificate Password** | Password for privatekey.pfx | `your_password` |
-| **ESP URL (2.1)** | OTP signing endpoint | `https://demo.esign.digital/esign/2.1/signdoc/` |
-| **ESP URL (3.2)** | eKYC signing endpoint | `https://demo.esign.digital/esign/3.2/signdoc/` |
-
-### Demo vs Production
-
-| Environment | Purpose |
-|-------------|---------|
-| Demo URLs | Testing and development |
-| Production URLs | Live document signing |
-
-### How to Get Credentials
-
-1. Contact Capricorn Technologies
-2. Complete registration process
-3. Sign agreement and pay fees
-4. Receive credentials via secure channel
-
----
-
-## What You Configure Yourself
-
-These are NOT from Capricorn - **you create them**:
-
-| Credential | Description | Purpose |
-|------------|-------------|---------|
-| **API Token** | Any secure string | Authenticates SDK clients |
-| **API Key** | Any secure string | Additional authentication |
-| **Callback URL** | Your ngrok/domain URL | Where ESP sends signed documents |
-
-**Example:**
-```properties
-api.auth.token=MY_SECURE_TOKEN_12345
-api.auth.key=my_secure_key_abcdef
+```mermaid
+flowchart LR
+    A[1. Extract Package] --> B[2. Setup ngrok]
+    B --> C[3. Configure]
+    C --> D[4. Start Server]
+    D --> E[✅ Ready!]
 ```
+
+| Step | Time | Description |
+|------|------|-------------|
+| 1. Extract | 1 min | Unzip the package |
+| 2. Setup ngrok | 5 min | Create account & configure |
+| 3. Configure | 3 min | Edit application.properties |
+| 4. Start | 1 min | Run start script |
+| **Total** | **~10 min** | |
+
+!!! success "No Build Required!"
+    JAR files are pre-built. Just extract, configure, and start!
 
 ---
 
@@ -91,532 +31,814 @@ api.auth.key=my_secure_key_abcdef
 
 ### Required Software
 
-| Software | Minimum Version | Purpose |
-|----------|-----------------|---------|
-| **Java JDK** | 17 | Runtime and compilation |
-| **Apache Maven** | 3.6.0 | Build tool |
-| **ngrok** | Any | HTTPS tunnel for testing |
+| Software | Version | Purpose |
+|----------|---------|---------|
+| **Java JDK** | 17+ | Runtime |
+| **ngrok** | Any | HTTPS tunnel for ESP callbacks |
 
-### HTTPS for Callbacks
-
-**HTTPS is recommended** for callback URLs.
-
-- **Development:** ngrok provides HTTPS automatically (free)
-- **Production:** Use your own domain with SSL certificate
-
-HTTP might work in some cases, but HTTPS is preferred by ESP providers.
+!!! note "Maven Not Required"
+    Maven is only needed if you want to modify Java source code. For normal usage, JAR files are pre-built.
 
 ---
 
-## Installation by Operating System
+## Step 1: Install Java
 
-### Windows
+=== "Windows"
 
-#### Automatic (Recommended)
-```cmd
-install-prerequisites.bat    (Run as Administrator)
-```
+    **Option A: Automatic (Recommended)**
+    ```cmd
+    install-prerequisites.bat
+    ```
+    Run as Administrator. This installs Java, Maven, and ngrok via Chocolatey.
 
-#### Manual
-```cmd
-choco install temurin17 -y
-choco install maven -y
-choco install ngrok -y
-```
+    **Option B: Manual with Chocolatey**
+    ```cmd
+    choco install temurin17 -y
+    ```
 
-#### Manual Download
-- Java 17: https://adoptium.net/
-- Maven: https://maven.apache.org/download.cgi
-- ngrok: https://ngrok.com/download
+    **Option C: Manual Download**
+    
+    1. Download from [Adoptium](https://adoptium.net/)
+    2. Run installer
+    3. Add to PATH
 
-### Linux (Ubuntu/Debian)
+=== "Linux"
 
-#### Automatic
-```bash
-chmod +x install-prerequisites.sh
-./install-prerequisites.sh
-```
+    **Ubuntu/Debian:**
+    ```bash
+    sudo apt update
+    sudo apt install -y openjdk-17-jdk
+    ```
 
-#### Manual
-```bash
-sudo apt update
-sudo apt install -y openjdk-17-jdk maven
+    **CentOS/RHEL:**
+    ```bash
+    sudo yum install -y java-17-openjdk-devel
+    ```
 
-# ngrok
-curl -s https://ngrok-agent.s3.amazonaws.com/ngrok.asc | sudo tee /etc/apt/trusted.gpg.d/ngrok.asc >/dev/null
-echo "deb https://ngrok-agent.s3.amazonaws.com buster main" | sudo tee /etc/apt/sources.list.d/ngrok.list
-sudo apt update && sudo apt install -y ngrok
-```
+    **Fedora:**
+    ```bash
+    sudo dnf install -y java-17-openjdk-devel
+    ```
 
-### Mac
+=== "Mac"
 
-#### Automatic
-```bash
-chmod +x install-prerequisites.sh
-./install-prerequisites.sh
-```
+    **Option A: Homebrew (Recommended)**
+    ```bash
+    brew install openjdk@17
+    echo 'export PATH="/opt/homebrew/opt/openjdk@17/bin:$PATH"' >> ~/.zshrc
+    source ~/.zshrc
+    ```
 
-#### Manual (Homebrew)
-```bash
-brew install openjdk@17 maven ngrok
-echo 'export PATH="/opt/homebrew/opt/openjdk@17/bin:$PATH"' >> ~/.zshrc
-source ~/.zshrc
-```
+    **Option B: Manual Download**
+    
+    1. Download from [Adoptium](https://adoptium.net/)
+    2. Run installer
 
-### Verify Installation
+### Verify Java Installation
 
-```bash
-java -version      # Should show 17+
-mvn -version       # Should show 3.6+
-ngrok version      # Any version
-```
+=== "Windows"
+
+    ```cmd
+    java -version
+    ```
+
+=== "Linux"
+
+    ```bash
+    java -version
+    ```
+
+=== "Mac"
+
+    ```bash
+    java -version
+    ```
+
+Expected output: `openjdk version "17.x.x"` or higher.
 
 ---
 
-## Configuration
+## Step 2: Setup ngrok (Required)
 
-**IMPORTANT:** Both `tomcat_esign` and `esign-api` need to be configured!
+!!! warning "Why ngrok is Required"
+    The ESP (eSign Provider) needs to send the signed document back to your server. Since your local server (`localhost:8081`) is not accessible from the internet, ngrok creates a secure tunnel.
 
-### Files to Configure
+    ```
+    Internet                         Your Computer
+    ┌─────────────────┐              ┌─────────────────┐
+    │  ESP Server     │              │  localhost:8081 │
+    │                 │   ngrok      │                 │
+    │  Sends signed   │──────────────│  Receives       │
+    │  document to    │   tunnel     │  callback       │
+    │  ngrok URL      │              │                 │
+    └─────────────────┘              └─────────────────┘
+    ```
+
+### 2.1 Create ngrok Account (Free)
+
+1. Go to [https://ngrok.com/](https://ngrok.com/)
+2. Click **"Sign up"** (top right)
+3. Create account (email or GitHub/Google)
+4. Verify your email
+
+### 2.2 Get Your Authtoken
+
+1. Login to [ngrok Dashboard](https://dashboard.ngrok.com/)
+2. Go to **"Your Authtoken"** in left sidebar
+3. Click **"Copy"** to copy your authtoken
+
+!!! info "Authtoken looks like this"
+    ```
+    2abc123XYZ456789abcdefghijklmnop_qrstuvwxyz
+    ```
+
+### 2.3 Install ngrok
+
+=== "Windows"
+
+    **Option A: Chocolatey**
+    ```cmd
+    choco install ngrok -y
+    ```
+
+    **Option B: Manual Download**
+    
+    1. Download from [ngrok.com/download](https://ngrok.com/download)
+    2. Extract `ngrok.exe` to a folder
+    3. Add folder to PATH
+
+=== "Linux"
+
+    **Ubuntu/Debian:**
+    ```bash
+    curl -s https://ngrok-agent.s3.amazonaws.com/ngrok.asc | sudo tee /etc/apt/trusted.gpg.d/ngrok.asc >/dev/null
+    echo "deb https://ngrok-agent.s3.amazonaws.com buster main" | sudo tee /etc/apt/sources.list.d/ngrok.list
+    sudo apt update
+    sudo apt install ngrok
+    ```
+
+    **Using Snap:**
+    ```bash
+    sudo snap install ngrok
+    ```
+
+=== "Mac"
+
+    **Homebrew:**
+    ```bash
+    brew install ngrok
+    ```
+
+### 2.4 Configure ngrok with Authtoken
+
+=== "Windows"
+
+    ```cmd
+    ngrok config add-authtoken YOUR_AUTHTOKEN_HERE
+    ```
+
+=== "Linux"
+
+    ```bash
+    ngrok config add-authtoken YOUR_AUTHTOKEN_HERE
+    ```
+
+=== "Mac"
+
+    ```bash
+    ngrok config add-authtoken YOUR_AUTHTOKEN_HERE
+    ```
+
+!!! success "Expected Output"
+    ```
+    Authtoken saved to configuration file: /path/to/ngrok.yml
+    ```
+
+### 2.5 Test ngrok
+
+=== "Windows"
+
+    ```cmd
+    ngrok version
+    ```
+
+=== "Linux"
+
+    ```bash
+    ngrok version
+    ```
+
+=== "Mac"
+
+    ```bash
+    ngrok version
+    ```
+
+---
+
+## Step 3: Extract Package
+
+=== "Windows"
+
+    ```cmd
+    :: Right-click esign-sdk-complete.zip → Extract All
+    :: Or use command line:
+    tar -xf esign-sdk-complete.zip
+    cd esign-sdk-complete
+    ```
+
+=== "Linux"
+
+    ```bash
+    unzip esign-sdk-complete.zip
+    cd esign-sdk-complete
+    chmod +x *.sh
+    ```
+
+=== "Mac"
+
+    ```bash
+    unzip esign-sdk-complete.zip
+    cd esign-sdk-complete
+    chmod +x *.sh
+    ```
+
+### Package Structure
 
 ```
 esign-sdk-complete/
-├── tomcat_esign/
-│   ├── config/
-│   │   ├── eSignLicense              ← Replace with YOUR license
-│   │   └── privatekey.pfx            ← Replace with YOUR certificate
-│   └── src/main/resources/
-│       └── application.properties    ← Update settings
+├── esign-api/
+│   ├── target/
+│   │   └── esign-api-1.0.0.jar        ← Pre-built JAR (~50 MB)
+│   ├── application.properties          ← Edit this (main config)
+│   └── config/
+│       ├── eSignLicense                ← Replace with yours
+│       └── privatekey.pfx              ← Replace with yours
 │
-└── esign-api/
-    ├── config/
-    │   ├── eSignLicense              ← Replace with YOUR license
-    │   └── privatekey.pfx            ← Replace with YOUR certificate
-    └── src/main/resources/
-        └── application.properties    ← Update settings
+├── tomcat_esign/
+│   ├── target/
+│   │   └── br-esign-sdk-1.0.0-exec.jar ← Pre-built JAR (~40 MB)
+│   ├── application.properties          ← Edit this (Web UI config)
+│   └── config/
+│       ├── eSignLicense                ← Replace with yours
+│       └── privatekey.pfx              ← Replace with yours
+│
+├── start.bat / start.sh                ← Start REST API
+├── start-ui.bat / start-ui.sh          ← Start Web UI (optional)
+└── ...
 ```
 
-### Step 1: Replace License Files (Both Projects)
+---
 
-```bash
-# Windows
-copy "C:\path\to\your\eSignLicense" "tomcat_esign\config\"
-copy "C:\path\to\your\privatekey.pfx" "tomcat_esign\config\"
-copy "C:\path\to\your\eSignLicense" "esign-api\config\"
-copy "C:\path\to\your\privatekey.pfx" "esign-api\config\"
+## Step 4: Replace License Files
 
-# Linux/Mac
-cp /path/to/your/eSignLicense tomcat_esign/config/
-cp /path/to/your/privatekey.pfx tomcat_esign/config/
-cp /path/to/your/eSignLicense esign-api/config/
-cp /path/to/your/privatekey.pfx esign-api/config/
+Get these files from **Capricorn Technologies** (your ESP provider):
+
+- `eSignLicense` - License file
+- `privatekey.pfx` - Digital certificate
+
+=== "Windows"
+
+    ```cmd
+    :: Replace in esign-api
+    copy "C:\path\to\your\eSignLicense" "esign-api\config\"
+    copy "C:\path\to\your\privatekey.pfx" "esign-api\config\"
+    
+    :: Replace in tomcat_esign (if using Web UI)
+    copy "C:\path\to\your\eSignLicense" "tomcat_esign\config\"
+    copy "C:\path\to\your\privatekey.pfx" "tomcat_esign\config\"
+    ```
+
+=== "Linux"
+
+    ```bash
+    # Replace in esign-api
+    cp /path/to/your/eSignLicense esign-api/config/
+    cp /path/to/your/privatekey.pfx esign-api/config/
+    
+    # Replace in tomcat_esign (if using Web UI)
+    cp /path/to/your/eSignLicense tomcat_esign/config/
+    cp /path/to/your/privatekey.pfx tomcat_esign/config/
+    ```
+
+=== "Mac"
+
+    ```bash
+    # Replace in esign-api
+    cp /path/to/your/eSignLicense esign-api/config/
+    cp /path/to/your/privatekey.pfx esign-api/config/
+    
+    # Replace in tomcat_esign (if using Web UI)
+    cp /path/to/your/eSignLicense tomcat_esign/config/
+    cp /path/to/your/privatekey.pfx tomcat_esign/config/
+    ```
+
+---
+
+## Step 5: Start ngrok Tunnel
+
+Open a **new terminal** and start ngrok:
+
+=== "Windows"
+
+    ```cmd
+    ngrok http 8081
+    ```
+
+=== "Linux"
+
+    ```bash
+    ngrok http 8081
+    ```
+
+=== "Mac"
+
+    ```bash
+    ngrok http 8081
+    ```
+
+### Copy Your ngrok URL
+
+You'll see output like this:
+
+```
+Session Status                online
+Account                       your@email.com (Plan: Free)
+Version                       3.x.x
+Region                        India (in)
+Web Interface                 http://127.0.0.1:4040
+Forwarding                    https://a1b2c3d4.ngrok-free.dev -> http://localhost:8081
 ```
 
-### Step 2: Configure tomcat_esign
+!!! success "Copy the Forwarding URL"
+    Copy `https://a1b2c3d4.ngrok-free.dev` (your URL will be different)
 
-Edit `tomcat_esign/src/main/resources/application.properties`:
+!!! warning "Keep ngrok Running"
+    Keep this terminal open! If you close it, the tunnel stops and ESP callbacks will fail.
+
+---
+
+## Step 6: Configure Application
+
+Edit the configuration file:
+
+=== "Windows"
+
+    ```cmd
+    notepad esign-api\application.properties
+    ```
+
+=== "Linux"
+
+    ```bash
+    nano esign-api/application.properties
+    ```
+
+=== "Mac"
+
+    ```bash
+    open -e esign-api/application.properties
+    :: Or use nano:
+    nano esign-api/application.properties
+    ```
+
+### Configuration Settings
 
 ```properties
-server.port=8080
-
 # ========================================
-# ESP URLs (FROM CAPRICORN)
-# ========================================
-esign.2_1.esp.url=https://demo.esign.digital/esign/2.1/signdoc/
-esign.3_2.esp.url=https://demo.esign.digital/esign/3.2/signdoc/
-
-# ========================================
-# Callback URLs (YOUR ngrok/domain URL)
-# ========================================
-esign.2_1.response.url=https://YOUR-NGROK-URL.ngrok-free.dev/api/esign/esp-response
-esign.3_2.response.url=https://YOUR-NGROK-URL.ngrok-free.dev/api/esign/3.2/getdocs/
-esign.3_2.redirect.url=https://YOUR-NGROK-URL.ngrok-free.dev/api/esign/3.2/callback/
-esign.base.url=https://YOUR-NGROK-URL.ngrok-free.dev
-
-# ========================================
-# Credentials (FROM CAPRICORN)
-# ========================================
-esign.asp.id=YOUR_ASP_ID
-esign.3_2.signer.id=youruser@yourcompany.capricorn
-esign.certificate.password=YOUR_CERTIFICATE_PASSWORD
-
-# ========================================
-# File Paths (usually no change needed)
-# ========================================
-esign.license.path=./config/eSignLicense
-esign.certificate.path=./config/privatekey.pfx
-esign.temp.path=./temp/
-esign.output.path=./signed/
-```
-
-### Step 3: Configure esign-api
-
-Edit `esign-api/src/main/resources/application.properties`:
-
-```properties
-server.port=8081
-
-# ========================================
-# YOUR Public URL (ngrok or domain)
+# YOUR NGROK URL (from Step 5)
 # ========================================
 api.base-url=https://YOUR-NGROK-URL.ngrok-free.dev
 
 # ========================================
-# API Authentication (YOU CREATE THESE)
+# API AUTHENTICATION (You create these - any secure strings)
 # ========================================
-api.auth.token=YOUR_TOKEN
-api.auth.key=YOUR_KEY
+api.auth.token=YOUR_SECURE_TOKEN
+api.auth.key=YOUR_SECURE_KEY
 
 # ========================================
-# ESP URLs (FROM CAPRICORN)
+# CREDENTIALS FROM CAPRICORN
+# ========================================
+esign.asp.id=YOUR_ASP_ID
+esign.certificate.password=YOUR_CERTIFICATE_PASSWORD
+esign.3_2.signer.id=youruser@yourcompany.capricorn
+
+# ========================================
+# ESP URLs (From Capricorn - usually don't change)
 # ========================================
 esign.2_1.esp.url=https://demo.esign.digital/esign/2.1/signdoc/
 esign.3_2.esp.url=https://demo.esign.digital/esign/3.2/signdoc/
-
-# ========================================
-# Credentials (FROM CAPRICORN)
-# ========================================
-esign.asp.id=YOUR_ASP_ID
-esign.3_2.signer.id=youruser@yourcompany.capricorn
-esign.certificate.password=YOUR_CERTIFICATE_PASSWORD
-
-# ========================================
-# File Paths (usually no change needed)
-# ========================================
-esign.license.path=./config/eSignLicense
-esign.certificate.path=./config/privatekey.pfx
 ```
 
-### Configuration Summary
+### What Each Setting Means
 
-| Property | Source | Configure In |
-|----------|--------|--------------|
-| `api.base-url` | Your ngrok URL | esign-api only |
-| `api.auth.token` | You create | esign-api only |
-| `api.auth.key` | You create | esign-api only |
-| `esign.2_1.esp.url` | From Capricorn | Both |
-| `esign.3_2.esp.url` | From Capricorn | Both |
-| `esign.asp.id` | From Capricorn | Both |
-| `esign.3_2.signer.id` | From Capricorn | Both |
-| `esign.certificate.password` | From Capricorn | Both |
-| `esign.base.url` | Your ngrok URL | tomcat_esign only |
-| `esign.2_1.response.url` | Your ngrok URL + path | tomcat_esign only |
-| `esign.3_2.response.url` | Your ngrok URL + path | tomcat_esign only |
-| `esign.3_2.redirect.url` | Your ngrok URL + path | tomcat_esign only |
+| Setting | Source | Example |
+|---------|--------|---------|
+| `api.base-url` | Your ngrok URL | `https://a1b2c3d4.ngrok-free.dev` |
+| `api.auth.token` | You create (any string) | `MySecureToken123` |
+| `api.auth.key` | You create (any string) | `MySecureKey456` |
+| `esign.asp.id` | From Capricorn | `yourcompanyaspid` |
+| `esign.certificate.password` | From Capricorn | `your_password` |
+| `esign.3_2.signer.id` | From Capricorn | `user@company.capricorn` |
 
 ---
 
-## Build & Deploy
+## Step 7: Start the Server
 
-### Automatic Build (Recommended)
+=== "Windows"
 
-**Windows:**
-```cmd
-build.bat
-```
+    ```cmd
+    start.bat
+    ```
 
-**Linux/Mac:**
-```bash
-./build.sh
-```
+=== "Linux"
 
-### What Build Does
+    ```bash
+    ./start.sh
+    ```
 
-1. Builds `tomcat_esign` first with `mvn install` (installs SDK to Maven repo)
-2. Builds `esign-api` second with `mvn package` (uses SDK from Maven repo)
+=== "Mac"
 
-### Manual Build
+    ```bash
+    ./start.sh
+    ```
 
-```bash
-# Step 1: MUST be first!
-cd tomcat_esign
-mvn clean install -DskipTests
-
-# Step 2: After tomcat_esign succeeds
-cd ../esign-api
-mvn clean package -DskipTests
-```
-
-### Build Output
+### Expected Output
 
 ```
-tomcat_esign/target/br-esign-sdk-1.0.0.jar    (Core SDK + Web UI)
-esign-api/target/esign-api-1.0.0.jar          (REST API)
+========================================
+  Starting eSign REST API Server
+========================================
+
+Server: esign-api (REST API)
+Port:   8081
+
+Config: esign-api/application.properties
+        (Edit this file, then restart - NO rebuild needed)
+
+Endpoints:
+  Health Check: http://localhost:8081/api/v1/esign/health
+  Upload PDF:   http://localhost:8081/api/v1/esign/upload-pdf
+
+Press Ctrl+C to stop the server.
+----------------------------------------
+
+  .   ____          _            __ _ _
+ /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
+...
+Started ESignApiApplication in 3.5 seconds
 ```
 
 ---
 
-## Starting & Stopping Services
+## Step 8: Verify Installation
 
-### Start REST API (for SDK usage)
+### Test Health Endpoint
 
-**Windows:**
-```cmd
-start.bat
+=== "Windows"
+
+    ```cmd
+    curl http://localhost:8081/api/v1/esign/health
+    ```
+    
+    Or open in browser: `http://localhost:8081/api/v1/esign/health`
+
+=== "Linux"
+
+    ```bash
+    curl http://localhost:8081/api/v1/esign/health
+    ```
+
+=== "Mac"
+
+    ```bash
+    curl http://localhost:8081/api/v1/esign/health
+    ```
+
+### Expected Response
+
+```json
+{"status":"UP"}
 ```
 
-**Linux/Mac:**
-```bash
-./start.sh
-```
+### Test via ngrok URL
 
-**URL:** http://localhost:8081
+=== "Windows"
 
-### Start Web UI (for browser testing) - Optional
+    ```cmd
+    curl https://YOUR-NGROK-URL.ngrok-free.dev/api/v1/esign/health
+    ```
 
-**Windows:**
-```cmd
-start-ui.bat
-```
+=== "Linux"
 
-**Linux/Mac:**
-```bash
-./start-ui.sh
-```
+    ```bash
+    curl https://YOUR-NGROK-URL.ngrok-free.dev/api/v1/esign/health
+    ```
 
-**URL:** http://localhost:8080
+=== "Mac"
 
-### Stop Services
+    ```bash
+    curl https://YOUR-NGROK-URL.ngrok-free.dev/api/v1/esign/health
+    ```
 
-- Press `Ctrl+C` in the terminal
-- Windows: `taskkill /F /IM java.exe`
-- Linux/Mac: `./stop.sh` or `pkill -f esign`
-
-### Verify Running
-
-```bash
-curl http://localhost:8081/api/v1/esign/health
-# Response: {"status":"UP"}
-```
+!!! success "Installation Complete! ✅"
+    Your eSign SDK server is now running and accessible via ngrok.
 
 ---
 
-## Testing with ngrok
+## Configuration Changes (No Rebuild Needed!)
 
-### Step-by-Step
+!!! tip "External Config Files"
+    Configuration files are **external** to the JAR. Just edit and restart - no rebuild required!
 
-**Terminal 1: Start API**
-```bash
-./start.sh   # or start.bat
-```
+### When ngrok URL Changes
 
-**Terminal 2: Start ngrok**
-```bash
-ngrok http 8081
-```
-
-Copy the URL: `https://abc123.ngrok-free.dev`
-
-**Update configuration in BOTH projects:**
-
-In `esign-api/src/main/resources/application.properties`:
-```properties
-api.base-url=https://abc123.ngrok-free.dev
-```
-
-In `tomcat_esign/src/main/resources/application.properties`:
-```properties
-esign.2_1.response.url=https://abc123.ngrok-free.dev/api/esign/esp-response
-esign.3_2.response.url=https://abc123.ngrok-free.dev/api/esign/3.2/getdocs/
-esign.3_2.redirect.url=https://abc123.ngrok-free.dev/api/esign/3.2/callback/
-esign.base.url=https://abc123.ngrok-free.dev
-```
-
-**Rebuild and restart:**
-```bash
-./build.sh   # or build.bat
-./start.sh   # or start.bat
-```
-
-**Test:**
-```bash
-curl https://abc123.ngrok-free.dev/api/v1/esign/health
-```
-
-### ngrok URL Changes
-
-Every time ngrok restarts, you get a new URL. You must:
 1. Copy new ngrok URL
-2. Update BOTH `application.properties` files
-3. Rebuild: `./build.sh`
-4. Restart: `./start.sh`
+2. Edit `esign-api/application.properties`
+3. Restart server
+
+=== "Windows"
+
+    ```cmd
+    :: Stop server (Ctrl+C), then:
+    notepad esign-api\application.properties
+    :: Update api.base-url, save, then:
+    start.bat
+    ```
+
+=== "Linux"
+
+    ```bash
+    # Stop server (Ctrl+C), then:
+    nano esign-api/application.properties
+    # Update api.base-url, save, then:
+    ./start.sh
+    ```
+
+=== "Mac"
+
+    ```bash
+    # Stop server (Ctrl+C), then:
+    nano esign-api/application.properties
+    # Update api.base-url, save, then:
+    ./start.sh
+    ```
+
+### What Requires Restart vs Rebuild
+
+| Change | Action |
+|--------|--------|
+| `application.properties` | Just restart |
+| ngrok URL | Just restart |
+| License files | Just restart |
+| Java code (.java files) | Rebuild required |
 
 ---
 
-## When to Rebuild
+## Optional: Web UI for Testing
 
-### Quick Reference
+If you want to test eSign via browser (without JavaScript/Android SDK):
 
-| What Changed | Rebuild Needed? | Action |
-|--------------|-----------------|--------|
-| License files only | ❌ No | Just restart |
-| `application.properties` | ✅ Yes | Rebuild + Restart |
-| ngrok URL changed | ✅ Yes | Rebuild + Restart |
-| Java source code | ✅ Yes | Rebuild + Restart |
+=== "Windows"
 
-### Avoid Rebuild with External Config
+    ```cmd
+    start-ui.bat
+    ```
 
-Create config file next to JAR:
+=== "Linux"
 
-```
-esign-api/
-├── target/
-│   └── esign-api-1.0.0.jar
-└── config/
-    └── application.properties    ← External config
-```
+    ```bash
+    ./start-ui.sh
+    ```
 
-Spring Boot reads external config automatically - no rebuild needed!
+=== "Mac"
 
----
+    ```bash
+    ./start-ui.sh
+    ```
 
-## Common Errors & Solutions
+Open browser: `http://localhost:8080`
 
-### Error: Could not find artifact br-esign-sdk
-
-```
-Could not find artifact com.capricorn:br-esign-sdk:1.0.0
-```
-
-**Cause:** tomcat_esign not built or not installed to Maven repo.
-
-**Solution:**
-```bash
-cd tomcat_esign
-mvn clean install -DskipTests
-```
+!!! note "Web UI Config"
+    If using Web UI, also edit `tomcat_esign/application.properties` with your ngrok URL.
 
 ---
 
-### Error: Port Already in Use
+## Stop Services
+
+=== "Windows"
+
+    ```cmd
+    :: Press Ctrl+C in terminal
+    :: Or force kill:
+    taskkill /F /IM java.exe
+    ```
+
+=== "Linux"
+
+    ```bash
+    # Press Ctrl+C in terminal
+    # Or:
+    ./stop.sh
+    # Or force kill:
+    pkill -f esign
+    ```
+
+=== "Mac"
+
+    ```bash
+    # Press Ctrl+C in terminal
+    # Or:
+    ./stop.sh
+    # Or force kill:
+    pkill -f esign
+    ```
+
+---
+
+## Troubleshooting
+
+### ngrok: Account Required Error
+
+```
+ERR_NGROK_4018: You must have a free ngrok account to use this feature
+```
+
+**Solution:** Create ngrok account and configure authtoken (see Step 2).
+
+---
+
+### Java Not Found
+
+=== "Windows"
+
+    ```cmd
+    :: Check if Java is installed
+    where java
+    
+    :: If not found, install:
+    choco install temurin17 -y
+    
+    :: Restart terminal after installation
+    ```
+
+=== "Linux"
+
+    ```bash
+    # Check if Java is installed
+    which java
+    
+    # If not found, install:
+    sudo apt install -y openjdk-17-jdk
+    ```
+
+=== "Mac"
+
+    ```bash
+    # Check if Java is installed
+    which java
+    
+    # If not found, install:
+    brew install openjdk@17
+    echo 'export PATH="/opt/homebrew/opt/openjdk@17/bin:$PATH"' >> ~/.zshrc
+    source ~/.zshrc
+    ```
+
+---
+
+### Port Already in Use
 
 ```
 Port 8081 was already in use
 ```
 
-**Solution:**
+=== "Windows"
 
-Windows:
-```cmd
-netstat -ano | findstr :8081
-taskkill /PID <PID> /F
-```
+    ```cmd
+    :: Find process using port
+    netstat -ano | findstr :8081
+    
+    :: Kill process (replace PID)
+    taskkill /PID 12345 /F
+    ```
 
-Linux/Mac:
-```bash
-lsof -i :8081
-kill -9 <PID>
-```
+=== "Linux"
+
+    ```bash
+    # Find process using port
+    lsof -i :8081
+    
+    # Kill process (replace PID)
+    kill -9 12345
+    ```
+
+=== "Mac"
+
+    ```bash
+    # Find process using port
+    lsof -i :8081
+    
+    # Kill process (replace PID)
+    kill -9 12345
+    ```
 
 ---
 
-### Error: License Not Found
+### License File Not Found
 
 ```
 License file not found: ./config/eSignLicense
 ```
 
 **Solution:**
-1. Check file exists in `config/` folder of BOTH projects
-2. Filename must be exactly `eSignLicense` (case-sensitive)
+
+1. Check file exists in `esign-api/config/` folder
+2. Filename must be exactly `eSignLicense` (case-sensitive on Linux/Mac)
+3. Get license file from Capricorn Technologies
 
 ---
 
-### Error: Certificate Password Wrong
+### Certificate Password Wrong
 
 ```
 keystore password was incorrect
 ```
 
 **Solution:**
-Verify `esign.certificate.password` matches what Capricorn provided (in BOTH projects).
+
+1. Verify `esign.certificate.password` in `application.properties`
+2. Password must match what Capricorn provided
+3. Check for extra spaces in the password
 
 ---
 
-### Error: CORS Blocked
-
-```
-Access blocked by CORS policy
-```
-
-**Solution:**
-Ensure `CorsConfig.java` exists in esign-api and rebuild.
-
----
-
-### Error: No Main Manifest
-
-```
-no main manifest attribute in jar
-```
-
-**Solution:**
-Update `pom.xml` with correct spring-boot-maven-plugin configuration:
-
-```xml
-<plugin>
-    <groupId>org.springframework.boot</groupId>
-    <artifactId>spring-boot-maven-plugin</artifactId>
-    <configuration>
-        <mainClass>com.capricorn.esign.ESignApplication</mainClass>
-    </configuration>
-    <executions>
-        <execution>
-            <goals>
-                <goal>repackage</goal>
-            </goals>
-        </execution>
-    </executions>
-</plugin>
-```
-
-Then rebuild.
-
----
-
-### Error: ESP Callback Failed
+### ESP Callback Failed
 
 ```
 ESP callback URL not reachable
 ```
 
 **Solution:**
-1. Verify ngrok is running
-2. Check ngrok URL is correct in BOTH `application.properties`
-3. Rebuild and restart
+
+1. Check ngrok is running in separate terminal
+2. Verify ngrok URL in `application.properties` is correct
+3. Test: `curl https://YOUR-NGROK-URL.ngrok-free.dev/api/v1/esign/health`
 
 ---
 
 ## Quick Reference
 
-### Commands
+### Commands Summary
 
 | Task | Windows | Linux/Mac |
 |------|---------|-----------|
-| Install prerequisites | `install-prerequisites.bat` | `./install-prerequisites.sh` |
-| Build all | `build.bat` | `./build.sh` |
 | Start REST API | `start.bat` | `./start.sh` |
 | Start Web UI | `start-ui.bat` | `./start-ui.sh` |
 | Start ngrok | `ngrok http 8081` | `ngrok http 8081` |
+| Stop server | `Ctrl+C` | `Ctrl+C` |
+| Edit config | `notepad esign-api\application.properties` | `nano esign-api/application.properties` |
 
 ### URLs
 
 | Service | URL |
 |---------|-----|
-| REST API | http://localhost:8081 |
+| REST API (local) | http://localhost:8081 |
+| REST API (ngrok) | https://YOUR-URL.ngrok-free.dev |
 | Health Check | http://localhost:8081/api/v1/esign/health |
-| Web UI | http://localhost:8080 |
+| Web UI (optional) | http://localhost:8080 |
+| ngrok Dashboard | http://127.0.0.1:4040 |
 
-### Important Files
+### Configuration Files
 
 | File | Purpose |
 |------|---------|
-| `tomcat_esign/src/main/resources/application.properties` | tomcat_esign configuration |
-| `esign-api/src/main/resources/application.properties` | esign-api configuration |
-| `tomcat_esign/config/eSignLicense` | License (tomcat_esign) |
-| `esign-api/config/eSignLicense` | License (esign-api) |
-| `tomcat_esign/config/privatekey.pfx` | Certificate (tomcat_esign) |
-| `esign-api/config/privatekey.pfx` | Certificate (esign-api) |
+| `esign-api/application.properties` | Main REST API config |
+| `esign-api/config/eSignLicense` | License file |
+| `esign-api/config/privatekey.pfx` | Certificate |
+| `tomcat_esign/application.properties` | Web UI config (optional) |
+
+---
+
+## What You Get from Capricorn vs What You Create
+
+### From Capricorn (ESP Provider)
+
+| Item | Description |
+|------|-------------|
+| `eSignLicense` | License file to activate SDK |
+| `privatekey.pfx` | Digital certificate for signing |
+| ASP ID | Your organization's unique ID |
+| Signer ID | eKYC identifier (for 3.2 mode) |
+| Certificate Password | Password for privatekey.pfx |
+| ESP URLs | Signing endpoints (demo/production) |
+
+### You Create Yourself
+
+| Item | Description |
+|------|-------------|
+| `api.auth.token` | Any secure string for API authentication |
+| `api.auth.key` | Any secure string for API authentication |
+| ngrok URL | From running ngrok |
 
 ---
 
