@@ -982,7 +982,7 @@ ESP callback URL not reachable
 | Service | URL |
 |---------|-----|
 | REST API (local) | http://localhost:8081 |
-| REST API (ngrok) | https://YOUR-URL.ngrok-free.dev |
+| REST API (public) | https://YOUR-PUBLIC-URL |
 | Health Check | http://localhost:8081/api/v1/esign/health |
 | Web UI (optional) | http://localhost:8080 |
 | ngrok Dashboard | http://127.0.0.1:4040 |
@@ -1040,9 +1040,22 @@ ESP callback URL not reachable
 | Priority | Item | Notes |
 |----------|------|-------|
 | 🔴 | Java 17+ installed and verified (`java -version`) | Required |
-| 🔴 | ngrok installed and configured with authtoken | For ESP callbacks |
-| 🔴 | ngrok account created (free tier is fine) | https://ngrok.com |
+| 🔴 | Public URL configured (see options below) | For ESP callbacks |
 | 🔴 | Package extracted successfully | Unzip the SDK |
+
+#### Public URL Options (Choose One)
+
+The ESP server needs to send callbacks to your server. You need a public URL:
+
+| Option | Use Case | Requirements |
+|--------|----------|--------------|
+| **ngrok** | Development, Testing, Quick setup | Free ngrok account, run `ngrok http 8081` |
+| **Own Domain** | Development with server, Production | Domain name, SSL certificate, Server with public IP |
+
+!!! tip "Which to Choose?"
+    - **New to eSign SDK?** → Use ngrok (fastest setup)
+    - **Have a server with public IP?** → Use your own domain
+    - **Going to production?** → Use your own domain (ngrok URLs change on restart)
 
 #### Files from Capricorn (ESP Provider)
 
@@ -1071,7 +1084,7 @@ ESP callback URL not reachable
 
 | Priority | Setting | Value |
 |----------|---------|-------|
-| 🔴 | `api.base-url` | Your ngrok URL |
+| 🔴 | `api.base-url` | Your public URL (ngrok or domain) |
 | 🔴 | `api.auth.token` | Your custom secure token |
 | 🔴 | `api.auth.key` | Your custom secure key |
 | 🔴 | `esign.asp.id` | From Capricorn |
@@ -1084,9 +1097,9 @@ ESP callback URL not reachable
 
 | Priority | Setting | Value |
 |----------|---------|-------|
-| 🟢 | `esign.base.url` | Your ngrok URL |
-| 🟢 | `esign.2_1.response.url` | ngrok URL + callback path |
-| 🟢 | `esign.3_2.response.url` | ngrok URL + callback path |
+| 🟢 | `esign.base.url` | Your public URL (ngrok or domain) |
+| 🟢 | `esign.2_1.response.url` | Public URL + callback path |
+| 🟢 | `esign.3_2.response.url` | Public URL + callback path |
 | 🟢 | `esign.asp.id` | From Capricorn |
 | 🟢 | `esign.certificate.password` | From Capricorn |
 
@@ -1094,13 +1107,24 @@ ESP callback URL not reachable
 
 ### Startup Checklist
 
-#### ngrok
+#### Public URL (Choose based on your setup)
 
-| Priority | Item | Notes |
-|----------|------|-------|
-| 🔴 | ngrok running in separate terminal (`ngrok http 8081`) | Keep running |
-| 🔴 | ngrok URL copied and updated in config | Update application.properties |
-| 🔴 | ngrok shows "Session Status: online" | Verify connection |
+=== "Using ngrok"
+
+    | Priority | Item | Notes |
+    |----------|------|-------|
+    | 🔴 | ngrok running in separate terminal (`ngrok http 8081`) | Keep running |
+    | 🔴 | ngrok URL copied and updated in config | Update application.properties |
+    | 🔴 | ngrok shows "Session Status: online" | Verify connection |
+
+=== "Using Own Domain"
+
+    | Priority | Item | Notes |
+    |----------|------|-------|
+    | 🔴 | Domain DNS configured and pointing to server | Check DNS propagation |
+    | 🔴 | SSL certificate installed and valid | HTTPS required |
+    | 🔴 | Reverse proxy (Nginx) configured and running | Route to port 8081 |
+    | 🔴 | Firewall allows ports 80/443 | For HTTPS traffic |
 
 #### Server
 
@@ -1119,7 +1143,7 @@ ESP callback URL not reachable
 | Priority | Item | Expected Result |
 |----------|------|-----------------|
 | 🔴 | Local: `curl http://localhost:8081/api/v1/esign/health` | `{"status":"UP"}` |
-| 🔴 | ngrok: `curl https://YOUR-NGROK-URL.ngrok-free.dev/api/v1/esign/health` | `{"status":"UP"}` |
+| 🔴 | Public URL: `curl https://YOUR-PUBLIC-URL/api/v1/esign/health` | `{"status":"UP"}` |
 
 #### API Authentication
 
@@ -1276,7 +1300,7 @@ Use NSSM (Non-Sucking Service Manager) or create a scheduled task to run on star
     curl http://localhost:8081/api/v1/esign/health
     
     :: Check ngrok tunnel
-    curl https://YOUR-URL.ngrok-free.dev/api/v1/esign/health
+    curl https://YOUR-PUBLIC-URL/api/v1/esign/health
     
     :: Check port in use
     netstat -ano | findstr :8081
@@ -1292,7 +1316,7 @@ Use NSSM (Non-Sucking Service Manager) or create a scheduled task to run on star
     curl http://localhost:8081/api/v1/esign/health
     
     # Check ngrok tunnel
-    curl https://YOUR-URL.ngrok-free.dev/api/v1/esign/health
+    curl https://YOUR-PUBLIC-URL/api/v1/esign/health
     
     # Check port in use
     lsof -i :8081
@@ -1311,7 +1335,7 @@ Use NSSM (Non-Sucking Service Manager) or create a scheduled task to run on star
     curl http://localhost:8081/api/v1/esign/health
     
     # Check ngrok tunnel
-    curl https://YOUR-URL.ngrok-free.dev/api/v1/esign/health
+    curl https://YOUR-PUBLIC-URL/api/v1/esign/health
     
     # Check port in use
     lsof -i :8081
