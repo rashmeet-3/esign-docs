@@ -57,7 +57,7 @@
 |----------|------|
 | 🔴 | `application.properties` configured for production |
 | 🔴 | Production ESP URLs set |
-| 🔴 | Public callback URL (ngrok or domain) configured |
+| 🔴 | Public callback URL configured (see options below) |
 | 🔴 | ASP ID and credentials set |
 | 🔴 | `api.auth.token` and `api.auth.key` set (your own secure values) |
 | 🟡 | File paths configured |
@@ -66,6 +66,18 @@
 | 🟢 | Log rotation configured |
 | 🟢 | Session timeout configured |
 | 🟡 | CORS settings configured for production domains |
+
+#### Public URL Options
+
+The ESP server needs to send callbacks to your server. Choose one option:
+
+| Option | Use Case | Requirements |
+|--------|----------|--------------|
+| **ngrok** | Development, Testing | Free ngrok account, run `ngrok http 8081` |
+| **Own Domain** | Development with server, Production | Domain, SSL certificate, Server with public IP |
+
+!!! tip "Production Recommendation"
+    For production, use your **own domain** with proper SSL certificate. ngrok is great for development but URLs change with each restart (unless you have paid plan).
 
 ### Testing
 

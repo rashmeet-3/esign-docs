@@ -8,7 +8,7 @@ Complete setup guide with step-by-step instructions for Windows, Linux, and Mac.
 
 ```mermaid
 flowchart LR
-    A[1. Extract Package] --> B[2. Setup ngrok]
+    A[1. Extract Package] --> B[2. Setup Public URL]
     B --> C[3. Configure]
     C --> D[4. Start Server]
     D --> E[✅ Ready!]
@@ -17,7 +17,7 @@ flowchart LR
 | Step | Time | Description |
 |------|------|-------------|
 | 1. Extract | 1 min | Unzip the package |
-| 2. Setup ngrok | 5 min | Create account & configure |
+| 2. Setup Public URL | 5 min | ngrok (quick) OR own domain (if available) |
 | 3. Configure | 3 min | Edit application.properties |
 | 4. Start | 1 min | Run start script |
 | **Total** | **~10 min** | |
@@ -34,7 +34,10 @@ flowchart LR
 | Software | Version | Purpose |
 |----------|---------|---------|
 | **Java JDK** | 17+ | Runtime |
-| **ngrok** | Any | HTTPS tunnel for ESP callbacks |
+| **ngrok** | Any | HTTPS tunnel for ESP callbacks (Option A) |
+
+!!! note "Alternative to ngrok"
+    If you have a server with a **public IP** and **domain name**, you can use that instead of ngrok. See [Option B: Use Your Own Domain](#option-b-use-your-own-domain-alternative) for details.
 
 !!! note "Maven Not Required"
     Maven is only needed if you want to modify Java source code. For normal usage, JAR files are pre-built.
@@ -170,30 +173,45 @@ Expected output: `openjdk version "17.x.x"` or higher.
 
 ---
 
-## Step 2: Setup ngrok (Required)
+## Step 2: Setup Public URL (Required)
 
-!!! warning "Why ngrok is Required"
-    The ESP (eSign Provider) needs to send the signed document back to your server. Since your local server (`localhost:8081`) is not accessible from the internet, ngrok creates a secure tunnel.
+!!! info "Why a Public URL is Required"
+    The ESP (eSign Provider) needs to send the signed document back to your server. Since your local server (`localhost:8081`) is not accessible from the internet, you need a **public URL** that can route traffic to your server.
 
     ```
-    Internet                         Your Computer
+    Internet                         Your Server
     ┌─────────────────┐              ┌─────────────────┐
     │  ESP Server     │              │  localhost:8081 │
-    │                 │   ngrok      │                 │
+    │                 │   Public     │                 │
     │  Sends signed   │──────────────│  Receives       │
-    │  document to    │   tunnel     │  callback       │
-    │  ngrok URL      │              │                 │
+    │  document to    │   URL        │  callback       │
+    │  your URL       │              │                 │
     └─────────────────┘              └─────────────────┘
     ```
 
-### 2.1 Create ngrok Account (Free)
+### Choose Your Option
+
+You have **two options** for getting a public URL:
+
+| Option | Best For | Requirements |
+|--------|----------|--------------|
+| **Option A: ngrok** | Development, Testing, Quick setup | Free ngrok account |
+| **Option B: Own Domain** | Development with existing server, Production | Domain, SSL certificate, Server with public IP |
+
+---
+
+### Option A: Use ngrok (Recommended for Development)
+
+ngrok creates a secure tunnel from the internet to your local machine. Great for development and testing.
+
+#### A.1 Create ngrok Account (Free)
 
 1. Go to [https://ngrok.com/](https://ngrok.com/)
 2. Click **"Sign up"** (top right)
 3. Create account (email or GitHub/Google)
 4. Verify your email
 
-### 2.2 Get Your Authtoken
+#### A.2 Get Your Authtoken
 
 1. Login to [ngrok Dashboard](https://dashboard.ngrok.com/)
 2. Go to **"Your Authtoken"** in left sidebar
@@ -204,7 +222,7 @@ Expected output: `openjdk version "17.x.x"` or higher.
     2abc123XYZ456789abcdefghijklmnop_qrstuvwxyz
     ```
 
-### 2.3 Install ngrok
+#### A.3 Install ngrok
 
 === "Windows"
 
@@ -241,7 +259,7 @@ Expected output: `openjdk version "17.x.x"` or higher.
     brew install ngrok
     ```
 
-### 2.4 Configure ngrok with Authtoken
+#### A.4 Configure ngrok with Authtoken
 
 === "Windows"
 
@@ -266,7 +284,7 @@ Expected output: `openjdk version "17.x.x"` or higher.
     Authtoken saved to configuration file: /path/to/ngrok.yml
     ```
 
-### 2.5 Test ngrok
+#### A.5 Test ngrok
 
 === "Windows"
 
@@ -285,6 +303,115 @@ Expected output: `openjdk version "17.x.x"` or higher.
     ```bash
     ngrok version
     ```
+
+---
+
+### Option B: Use Your Own Domain (Alternative)
+
+If you have a server with a **public IP address** and a **domain name**, you can use that instead of ngrok. This is useful if:
+
+- You already have a development server with public access
+- Your organization doesn't allow ngrok
+- You want a stable URL that doesn't change
+
+#### B.1 Requirements
+
+| Requirement | Description |
+|-------------|-------------|
+| **Server with Public IP** | Your server must be accessible from the internet |
+| **Domain Name** | e.g., `esign-dev.yourcompany.com` |
+| **SSL Certificate** | HTTPS is required (use Let's Encrypt for free) |
+| **Port 8081 Open** | Firewall must allow incoming traffic on port 8081 |
+
+#### B.2 Setup Steps
+
+**1. Configure DNS**
+
+Point your domain to your server's public IP:
+```
+esign-dev.yourcompany.com  →  YOUR_SERVER_PUBLIC_IP
+```
+
+**2. Install SSL Certificate (Let's Encrypt)**
+
+```bash
+# Install Certbot
+sudo apt install certbot
+
+# Get certificate
+sudo certbot certonly --standalone -d esign-dev.yourcompany.com
+
+# Certificate files will be at:
+# /etc/letsencrypt/live/esign-dev.yourcompany.com/fullchain.pem
+# /etc/letsencrypt/live/esign-dev.yourcompany.com/privkey.pem
+```
+
+**3. Configure Nginx Reverse Proxy (Recommended)**
+
+```bash
+sudo nano /etc/nginx/sites-available/esign-api
+```
+
+```nginx
+server {
+    listen 80;
+    server_name esign-dev.yourcompany.com;
+    return 301 https://$server_name$request_uri;
+}
+
+server {
+    listen 443 ssl http2;
+    server_name esign-dev.yourcompany.com;
+
+    ssl_certificate /etc/letsencrypt/live/esign-dev.yourcompany.com/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/esign-dev.yourcompany.com/privkey.pem;
+    ssl_protocols TLSv1.2 TLSv1.3;
+
+    location / {
+        proxy_pass http://localhost:8081;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
+}
+```
+
+```bash
+sudo ln -s /etc/nginx/sites-available/esign-api /etc/nginx/sites-enabled/
+sudo nginx -t
+sudo systemctl reload nginx
+```
+
+**4. Open Firewall**
+
+```bash
+sudo ufw allow 80/tcp
+sudo ufw allow 443/tcp
+sudo ufw reload
+```
+
+**5. Update application.properties**
+
+```properties
+# Use your domain instead of ngrok URL
+api.base-url=https://esign-dev.yourcompany.com
+```
+
+#### B.3 Verify Setup
+
+```bash
+# Test from any machine on the internet
+curl https://esign-dev.yourcompany.com/api/v1/esign/health
+```
+
+Expected response: `{"status":"UP"}`
+
+!!! tip "Development vs Production"
+    You can use the same domain setup for both development and production. The only difference is typically:
+    
+    - **Development:** Demo ESP URLs from Capricorn
+    - **Production:** Production ESP URLs from Capricorn
 
 ---
 
