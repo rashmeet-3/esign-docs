@@ -87,14 +87,40 @@ Response: {"success": true, "step": 9, "signedPdfPath": "..."}
 
 | Option | Values | Default | Description |
 |--------|--------|---------|-------------|
-| `cood` | `x1,y1,x2,y2` | `350,50,550,120` | Signature position |
-| `pagenum` | `1`, `all`, `1-3`, `first`, `last` | `1` | Pages to sign |
+| `cood` | `x1,y1,x2,y2` or `custom` | `350,50,550,120` | Signature position |
+| `pagenum` | `1`, `all`, `1-3`, `first`, `last`, `custom` | `1` | Pages to sign |
 | `reason` | String | `Digital Signature` | Signing reason |
 | `location` | String | `India` | Signing location |
 | `customtext` | String | - | Custom text in signature |
 | `greenticked` | `y` / `n` | `y` | Show green checkmark |
 | `dateformat` | Date pattern | `dd-MMM-yyyy hh:mm a` | Date format |
 | `lockpdf` | `n` / `y` / `cf` / `cfa` / `ym` | `n` | PDF lock mode |
+| `signaturePositions` | Array | - | Multi-location positions |
+
+---
+
+## Multi-Location Signing
+
+Different positions on different pages:
+
+```json
+{
+  "signerName": "John Doe",
+  "docInfo": "Contract",
+  "signatureMode": "multi",
+  "signaturePositions": [
+    { "pages": "first", "cood": "50,50,200,120" },
+    { "pages": "2,3", "cood": "200,400,400,470" },
+    { "pages": "last", "cood": "400,50,550,120" }
+  ],
+  "lockType": "n"
+}
+```
+
+| Field | Values |
+|-------|--------|
+| `pages` | `"first"`, `"last"`, `"all"`, `"1"`, `"1-3"`, `"1,3,5"` |
+| `cood` | `"x1,y1,x2,y2"` |
 
 ---
 

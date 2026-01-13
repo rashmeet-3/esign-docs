@@ -420,6 +420,187 @@ The `pagenum` option supports flexible page selection.
 
 ---
 
+## 8.1 Multi-Location Signing
+
+Multi-location signing allows you to place signatures at **different positions on different pages**. This is useful when you need varying signature placements (e.g., bottom-right on page 1, center on page 3, etc.).
+
+### When to Use Multi-Location
+
+| Scenario | Use |
+|----------|-----|
+| Same position on all pages | Standard `cood` + `pagenum` |
+| Different positions on different pages | `signaturePositions` array |
+| Signature on specific pages with specific coordinates | `signaturePositions` array |
+
+### Request Format
+
+To use multi-location signing, set `cood` and `pagenum` to `"custom"` and provide a `signaturePositions` array:
+
+#### JSON Format
+
+```json
+{
+    "auth": {
+        "command": "esign",
+        "token": "your-api-token",
+        "key": "your-api-key"
+    },
+    "parameter": {
+        "uploadpdf": {
+            "pdf64": "BASE64_ENCODED_PDF_CONTENT",
+            "title": "Multi-Location Contract",
+            "mode": "online-aadhaar-otp",
+            "txn": "CLIENT_TRANSACTION_ID",
+            "signername": "Signer Name",
+            "option": {
+                "cood": "custom",
+                "pagenum": "custom",
+                "reason": "Digital Signature",
+                "location": "India",
+                "greenticked": "y",
+                "lockpdf": "n",
+                "signaturePositions": [
+                    {
+                        "pages": "first",
+                        "cood": "50,50,200,120"
+                    },
+                    {
+                        "pages": "last",
+                        "cood": "400,50,550,120"
+                    },
+                    {
+                        "pages": "2,3",
+                        "cood": "200,400,400,470"
+                    }
+                ]
+            }
+        }
+    }
+}
+```
+
+#### XML Format
+
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<request>
+    <auth>
+        <command>esign</command>
+        <token>your-api-token</token>
+        <key>your-api-key</key>
+    </auth>
+    <parameter>
+        <uploadpdf>
+            <pdf64>BASE64_ENCODED_PDF_CONTENT</pdf64>
+            <title>Multi-Location Contract</title>
+            <mode>online-aadhaar-otp</mode>
+            <txn>CLIENT_TRANSACTION_ID</txn>
+            <signername>Signer Name</signername>
+            <option>
+                <cood>custom</cood>
+                <pagenum>custom</pagenum>
+                <reason>Digital Signature</reason>
+                <location>India</location>
+                <greenticked>y</greenticked>
+                <lockpdf>n</lockpdf>
+                <signaturePositions>
+                    <position>
+                        <pages>first</pages>
+                        <cood>50,50,200,120</cood>
+                    </position>
+                    <position>
+                        <pages>last</pages>
+                        <cood>400,50,550,120</cood>
+                    </position>
+                    <position>
+                        <pages>2,3</pages>
+                        <cood>200,400,400,470</cood>
+                    </position>
+                </signaturePositions>
+            </option>
+        </uploadpdf>
+    </parameter>
+</request>
+```
+
+### signaturePositions Array Reference
+
+Each object in the `signaturePositions` array has:
+
+| Field | Type | Required | Description |
+|-------|------|----------|-------------|
+| `pages` | String | Yes | Page selection: `"first"`, `"last"`, `"all"`, `"1"`, `"1-3"`, `"1,3,5"` |
+| `cood` | String | Yes | Coordinates for this position: `"x1,y1,x2,y2"` |
+
+### Page Selection Values for signaturePositions
+
+| Value | Description |
+|-------|-------------|
+| `"first"` | First page only |
+| `"last"` | Last page only |
+| `"all"` | All pages (same coordinates) |
+| `"1"` | Specific page number |
+| `"1-3"` | Page range (pages 1, 2, 3) |
+| `"1,3,5"` | Specific pages (comma-separated) |
+
+### Important Rules
+
+!!! warning "Required Settings for Multi-Location"
+    When using `signaturePositions`, you **must** set:
+    
+    - `cood` = `"custom"`
+    - `pagenum` = `"custom"`
+    
+    If these are not set to `"custom"`, the `signaturePositions` array will be ignored.
+
+### Multi-Location Examples
+
+**Example 1: Different corners on first and last page**
+```json
+"signaturePositions": [
+    { "pages": "first", "cood": "50,50,200,120" },
+    { "pages": "last", "cood": "400,700,550,770" }
+]
+```
+
+**Example 2: Signature on specific pages with different positions**
+```json
+"signaturePositions": [
+    { "pages": "1", "cood": "350,50,500,120" },
+    { "pages": "3", "cood": "50,400,200,470" },
+    { "pages": "5", "cood": "350,400,500,470" }
+]
+```
+
+**Example 3: Same position on a range of pages, different on last**
+```json
+"signaturePositions": [
+    { "pages": "1-4", "cood": "350,50,500,120" },
+    { "pages": "last", "cood": "200,50,400,120" }
+]
+```
+
+**Example 4: Multiple positions including all middle pages**
+```json
+"signaturePositions": [
+    { "pages": "first", "cood": "50,50,200,120" },
+    { "pages": "2,3,4", "cood": "200,400,400,470" },
+    { "pages": "last", "cood": "400,50,550,120" }
+]
+```
+
+### Validation Errors
+
+| Error | Cause | Solution |
+|-------|-------|----------|
+| `VAL_008` | `signaturePositions` provided but `cood` ≠ `"custom"` | Set `cood` to `"custom"` |
+| `VAL_009` | `signaturePositions` provided but `pagenum` ≠ `"custom"` | Set `pagenum` to `"custom"` |
+| `VAL_010` | Empty `signaturePositions` array | Add at least one position |
+| `VAL_011` | Invalid page value in position | Use valid page format |
+| `VAL_012` | Invalid coordinates in position | Use `"x1,y1,x2,y2"` format |
+
+---
+
 ## 9. Response Format
 
 ### Success Response
@@ -674,6 +855,52 @@ try {
             "mode": "capricorn-ekyc-account",
             "ekycid": "EKYC123456789",
             "signername": "Amit Kumar"
+        }
+    }
+}
+```
+
+### Example 6: Multi-Location Signing
+
+Sign different pages at different positions:
+
+```json
+{
+    "auth": {
+        "command": "esign",
+        "token": "your-api-token",
+        "key": "your-api-key"
+    },
+    "parameter": {
+        "uploadpdf": {
+            "pdf64": "...",
+            "title": "Multi-Page Agreement",
+            "mode": "online-aadhaar-otp",
+            "txn": "MULTI-LOC-001",
+            "signername": "Rahul Sharma",
+            "option": {
+                "cood": "custom",
+                "pagenum": "custom",
+                "reason": "Digital Signature",
+                "location": "Mumbai, India",
+                "greenticked": "y",
+                "dateformat": "dd-MMM-yyyy hh:mm a",
+                "lockpdf": "n",
+                "signaturePositions": [
+                    {
+                        "pages": "first",
+                        "cood": "50,50,200,120"
+                    },
+                    {
+                        "pages": "2,3,4",
+                        "cood": "350,400,500,470"
+                    },
+                    {
+                        "pages": "last",
+                        "cood": "400,50,550,120"
+                    }
+                ]
+            }
         }
     }
 }

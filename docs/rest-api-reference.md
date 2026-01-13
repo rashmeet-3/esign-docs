@@ -241,14 +241,64 @@ Initiates the signing process.
 
 | Option | Values | Default | Description |
 |--------|--------|---------|-------------|
-| `cood` | `x1,y1,x2,y2` | `350,50,550,120` | Signature position |
-| `pagenum` | `1`, `all`, `first`, `last`, `1-3`, `1,3,5` | `1` | Pages to sign |
+| `cood` | `x1,y1,x2,y2` or `custom` | `350,50,550,120` | Signature position |
+| `pagenum` | `1`, `all`, `first`, `last`, `1-3`, `1,3,5`, `custom` | `1` | Pages to sign |
 | `reason` | String | `Digital Signature` | Signing reason |
 | `location` | String | `India` | Signing location |
 | `customtext` | String | - | Custom text |
 | `greenticked` | `y` / `n` | `y` | Green checkmark |
 | `dateformat` | Pattern | `dd-MMM-yyyy hh:mm a` | Date format |
 | `lockpdf` | `n` / `y` / `cf` / `cfa` | `n` | Lock mode |
+| `signaturePositions` | Array | - | Multi-location positions (see below) |
+
+---
+
+## Multi-Location Signing
+
+For different signature positions on different pages, use `signaturePositions`:
+
+### Requirements
+
+- Set `cood` = `"custom"`
+- Set `pagenum` = `"custom"`
+- Provide `signaturePositions` array
+
+### JSON Example
+
+```json
+{
+  "auth": {
+    "command": "esign",
+    "token": "YOUR_TOKEN",
+    "key": "YOUR_KEY"
+  },
+  "parameter": {
+    "uploadpdf": {
+      "pdf64": "BASE64_PDF...",
+      "title": "Contract",
+      "mode": "online-aadhaar-otp",
+      "signername": "John Doe",
+      "option": {
+        "cood": "custom",
+        "pagenum": "custom",
+        "reason": "Digital Signature",
+        "signaturePositions": [
+          { "pages": "first", "cood": "50,50,200,120" },
+          { "pages": "2,3", "cood": "200,400,400,470" },
+          { "pages": "last", "cood": "400,50,550,120" }
+        ]
+      }
+    }
+  }
+}
+```
+
+### signaturePositions Array
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `pages` | String | `"first"`, `"last"`, `"all"`, `"1"`, `"1-3"`, `"1,3,5"` |
+| `cood` | String | Coordinates: `"x1,y1,x2,y2"` |
 
 ---
 

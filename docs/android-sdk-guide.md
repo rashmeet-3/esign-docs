@@ -409,6 +409,60 @@ SigningOptions options = new SigningOptions.Builder()
     .build();
 ```
 
+### Multi-Location Signing
+
+For different signature positions on different pages:
+
+```java
+SigningOptions options = new SigningOptions.Builder()
+    // Add positions for different pages
+    .addPosition("first", "50,50,200,120")        // Bottom-left on first page
+    .addPosition("2,3,4", 200, 400, 400, 470)     // Center on pages 2-4
+    .addPosition("last", "400,50,550,120")        // Bottom-right on last page
+    
+    // Other options still apply
+    .reason("Digital Signature")
+    .location("India")
+    .lockPdf(SigningOptions.LockMode.NO_LOCK)
+    .build();
+```
+
+#### Multi-Location Methods
+
+| Method | Description |
+|--------|-------------|
+| `.addPosition(pages, cood)` | Add position with coordinate string |
+| `.addPosition(pages, x1, y1, x2, y2)` | Add position with coordinates |
+| `.signaturePositions(List)` | Set list of SignaturePosition objects |
+| `.clearPositions()` | Remove all positions |
+
+#### SignaturePosition Class
+
+```java
+// Create positions manually if needed
+List<SigningOptions.SignaturePosition> positions = new ArrayList<>();
+positions.add(new SigningOptions.SignaturePosition("first", "50,50,200,120"));
+positions.add(new SigningOptions.SignaturePosition("last", "400,50,550,120"));
+
+SigningOptions options = new SigningOptions.Builder()
+    .signaturePositions(positions)
+    .build();
+```
+
+#### Pages Values for Multi-Location
+
+| Value | Description |
+|-------|-------------|
+| `"first"` | First page only |
+| `"last"` | Last page only |
+| `"all"` | All pages |
+| `"1"` | Specific page |
+| `"1-3"` | Page range |
+| `"1,3,5"` | Specific pages |
+
+!!! note "Auto-Settings"
+    When using `.addPosition()`, the SDK automatically sets `cood` and `pagenum` to `"custom"`.
+
 ### Coordinate System
 
 ```

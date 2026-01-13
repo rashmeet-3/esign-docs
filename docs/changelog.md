@@ -23,16 +23,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - `online-aadhaar-face` - Face authentication
   - `capricorn-ekyc-account` - Pre-verified eKYC
 - Multi-page signature support (all, first, last, range, specific pages)
+- **Multi-location signature support** (different positions on different pages)
 - Configurable signature appearance (position, size, date format)
 - PDF lock modes (no lock, certified, form filling)
 - Green tick and custom text in signature
 - PKCS7_COMPLETE signature format with TSA timestamp
 - LTV (Long Term Validation) enabled signatures
-- Web UI for browser-based testing
+- Web UI for browser-based testing with visual signature positioning
 
 **REST API (esign-api)**
 - RESTful endpoints for SDK integration
 - XML and JSON request/response support
+- **Multi-location signing via `signaturePositions` array**
 - Transaction tracking with unique reference IDs
 - Status checking endpoint
 - Signed document retrieval endpoint
@@ -45,6 +47,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Browser-compatible client library
 - Promise-based async API
 - TypeScript definitions included
+- **Multi-location support** via `.signaturePositions()` and `.addPosition()` methods
 - Minified production build
 - ES6 module support
 
@@ -52,6 +55,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - AAR package for easy integration
 - Kotlin and Java compatible
 - Builder pattern for requests
+- **Multi-location support** via `.addPosition()` and `SignaturePosition` class
 - Callback-based async operations
 - ProGuard rules included
 

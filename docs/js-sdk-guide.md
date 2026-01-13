@@ -183,6 +183,53 @@ const options = new SigningOptions()
     // PDF protection
     .lockPdf(LockMode.NO_LOCK)
     
+    // Multi-location signing (different positions on different pages)
+    .signaturePositions([
+        { pages: 'first', cood: '50,50,200,120' },
+        { pages: 'last', cood: '400,50,550,120' }
+    ])
+    
+    // Or add positions one at a time
+    .addPosition('first', 50, 50, 200, 120)
+    .addPosition('last', '400,50,550,120')
+    .addPosition('2,3', 200, 400, 400, 470)
+    
+    // Clear all positions
+    .clearPositions()
+    
+    .build();
+```
+
+#### Multi-Location Methods
+
+| Method | Description |
+|--------|-------------|
+| `.signaturePositions(array)` | Set array of `{pages, cood}` positions |
+| `.addPosition(pages, x1, y1, x2, y2)` | Add a position with coordinates |
+| `.addPosition(pages, 'x1,y1,x2,y2')` | Add a position with coordinate string |
+| `.clearPositions()` | Remove all multi-location positions |
+
+!!! note "Multi-Location Auto-Settings"
+    When using `.signaturePositions()` or `.addPosition()`, the SDK automatically sets `cood` and `pagenum` to `"custom"`.
+
+#### Multi-Location Example
+
+```javascript
+// Different signature positions on different pages
+const options = new SigningOptions()
+    .addPosition('first', 50, 50, 200, 120)      // Bottom-left on first page
+    .addPosition('2,3,4', 200, 400, 400, 470)    // Center on pages 2-4
+    .addPosition('last', 400, 50, 550, 120)      // Bottom-right on last page
+    .reason('Digital Signature')
+    .location('India')
+    .build();
+
+const request = new ESignRequest()
+    .pdf64(base64Pdf)
+    .title('Multi-Location Contract')
+    .mode(ESignMode.OTP)
+    .signerName('John Doe')
+    .options(options)
     .build();
 ```
 
