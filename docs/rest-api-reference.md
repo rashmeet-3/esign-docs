@@ -10,7 +10,7 @@ Quick reference for the eSign REST API used by JavaScript SDK and Android SDK.
 
 ## Authentication
 
-All requests require authentication headers:
+The signing endpoint (`/api/v1/esign`) requires authentication in the request body:
 
 ```json
 {
@@ -28,18 +28,63 @@ All requests require authentication headers:
 
 | Method | Endpoint | Description |
 |--------|----------|-------------|
-| `POST` | `/api/v1/esign/upload-pdf` | Upload and sign a PDF |
+| `POST` | `/api/v1/esign/upload-pdf` | Upload a PDF file and retrieve its Base64 value |
+| `POST` | `/api/v1/esign` | Initiate the signing process |
 | `GET` | `/api/v1/esign/status/{reference}` | Check signing status |
 | `GET` | `/api/v1/esign/document/{reference}` | Download signed PDF |
 | `GET` | `/api/v1/esign/health` | Health check |
 
 ---
 
-## 1. Upload and Sign PDF
+## 1. Upload PDF and Get Base64 (Utility Endpoint)
 
 ### `POST /api/v1/esign/upload-pdf`
 
-Initiates the signing process.
+A utility endpoint that accepts a PDF file via form-data and returns its Base64 encoding.
+
+!!! note "This is a utility endpoint"
+    This endpoint does **NOT** initiate signing. It only converts a PDF file to Base64 format. To sign a document, use the `/api/v1/esign` endpoint.
+
+=== "cURL Example"
+
+    ```bash
+    curl -X POST "https://your-ngrok-url.ngrok-free.dev/api/v1/esign/upload-pdf" \
+      -F "file=@/path/to/document.pdf"
+    ```
+
+### Request
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `file` | File (form-data) | PDF file to upload |
+
+### Success Response
+
+```json
+{
+  "success": true,
+  "filename": "FDE68A84BE466467344F7D97B6907563D759031C_signed.pdf",
+  "size": 133704,
+  "pdf64": "JVBERi0xLjQK..."
+}
+```
+
+### Response Fields
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `success` | Boolean | `true` if upload succeeded |
+| `filename` | String | Generated filename |
+| `size` | Number | File size in bytes |
+| `pdf64` | String | Base64 encoded PDF content |
+
+---
+
+## 2. Sign PDF (Main Signing Endpoint)
+
+### `POST /api/v1/esign`
+
+Initiates the signing process. This is the main endpoint for document signing.
 
 === "JSON Request"
 
@@ -104,10 +149,10 @@ Initiates the signing process.
     </request>
     ```
 
-=== "cURL Example"
+=== "cURL Example (JSON)"
 
     ```bash
-    curl -X POST "https://your-ngrok-url.ngrok-free.dev/api/v1/esign/upload-pdf" \
+    curl -X POST "https://your-ngrok-url.ngrok-free.dev/api/v1/esign" \
       -H "Content-Type: application/json" \
       -d '{
         "auth": {
@@ -126,6 +171,42 @@ Initiates the signing process.
         }
       }'
     ```
+
+=== "cURL Example (XML)"
+
+    ```bash
+    curl -X POST "https://your-ngrok-url.ngrok-free.dev/api/v1/esign" \
+      -H "Content-Type: application/xml" \
+      -d '<?xml version="1.0" encoding="UTF-8"?>
+      <request>
+        <auth>
+          <command>esign</command>
+          <token>YOUR_TOKEN</token>
+          <key>YOUR_KEY</key>
+        </auth>
+        <parameter>
+          <uploadpdf>
+            <pdf64>JVBERi0xLjQK...</pdf64>
+            <title>Contract</title>
+            <mode>online-aadhaar-otp</mode>
+            <txn>TXN123456</txn>
+            <signername>John Doe</signername>
+          </uploadpdf>
+        </parameter>
+      </request>'
+    ```
+
+### Request Parameters
+
+| Parameter | Type | Required | Description |
+|-----------|------|----------|-------------|
+| `pdf64` | String | Yes | Base64 encoded PDF (get from `/upload-pdf` or encode yourself) |
+| `title` | String | Yes | Document title (max 50 characters) |
+| `mode` | String | Yes | Authentication mode (see [Authentication Modes](#authentication-modes)) |
+| `txn` | String | Yes | Unique transaction ID |
+| `signername` | String | Yes | Name of the signer |
+| `callbackurl` | String | No | URL for callback after signing |
+| `option` | Object | No | Signing options (see [Signing Options](#signing-options)) |
 
 ### Success Response
 
@@ -156,7 +237,7 @@ Initiates the signing process.
 
 ---
 
-## 2. Check Status
+## 3. Check Status
 
 ### `GET /api/v1/esign/status/{reference}`
 
@@ -189,7 +270,7 @@ Initiates the signing process.
 
 ---
 
-## 3. Download Signed PDF
+## 4. Download Signed PDF
 
 ### `GET /api/v1/esign/document/{reference}`
 
@@ -205,7 +286,7 @@ Initiates the signing process.
 
 ---
 
-## 4. Health Check
+## 5. Health Check
 
 ### `GET /api/v1/esign/health`
 
@@ -449,14 +530,25 @@ sequenceDiagram
     participant ESP as ESP Server
     participant User as User
 
-    App->>API: POST /upload-pdf
-    API-->>App: redirectUrl, reference
+    Note over App,API: Step 1: (Optional) Convert PDF to Base64
+    App->>API: POST /upload-pdf (form-data with file)
+    API-->>App: { success: true, pdf64: "..." }
+
+    Note over App,API: Step 2: Initiate Signing
+    App->>API: POST /esign (JSON/XML with pdf64)
+    API-->>App: { redirectUrl, reference }
+
+    Note over App,User: Step 3: User Authentication
     App->>User: Open redirectUrl
-    User->>ESP: Complete OTP/Auth
+    User->>ESP: Complete OTP/Biometric Auth
     ESP->>API: Callback with signature
+
+    Note over API: Step 4: Process Signature
     API-->>API: Embed signature in PDF
+
+    Note over App,API: Step 5: Retrieve Signed Document
     App->>API: GET /status/{reference}
-    API-->>App: status: COMPLETED
+    API-->>App: { status: "COMPLETED" }
     App->>API: GET /document/{reference}
     API-->>App: Signed PDF
 ```
@@ -511,15 +603,34 @@ client.signDocument(request) { response ->
 # 1. Health check
 curl https://your-ngrok-url.ngrok-free.dev/api/v1/esign/health
 
-# 2. Upload PDF (replace with your values)
+# 2. (Optional) Convert PDF file to Base64
 curl -X POST https://your-ngrok-url.ngrok-free.dev/api/v1/esign/upload-pdf \
-  -H "Content-Type: application/json" \
-  -d @request.json
+  -F "file=@document.pdf"
 
-# 3. Check status
+# 3. Sign PDF (use pdf64 from step 2 or your own Base64 encoded PDF)
+curl -X POST https://your-ngrok-url.ngrok-free.dev/api/v1/esign \
+  -H "Content-Type: application/json" \
+  -d '{
+    "auth": {
+      "command": "esign",
+      "token": "YOUR_TOKEN",
+      "key": "YOUR_KEY"
+    },
+    "parameter": {
+      "uploadpdf": {
+        "pdf64": "YOUR_BASE64_PDF",
+        "title": "Test Document",
+        "mode": "online-aadhaar-otp",
+        "txn": "TEST-001",
+        "signername": "John Doe"
+      }
+    }
+  }'
+
+# 4. Check status
 curl https://your-ngrok-url.ngrok-free.dev/api/v1/esign/status/YOUR_REFERENCE
 
-# 4. Download signed PDF
+# 5. Download signed PDF
 curl -o signed.pdf https://your-ngrok-url.ngrok-free.dev/api/v1/esign/document/YOUR_REFERENCE
 ```
 
